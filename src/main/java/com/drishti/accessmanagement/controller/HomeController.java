@@ -7,19 +7,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 public class HomeController {
-
-  @PostMapping(value = "/home")
-  public String showHome(@ModelAttribute UserLogin userLogin) {
-
-    if(userLogin.getUserId().equalsIgnoreCase("Vivek") &&
-        userLogin.getPassword().equalsIgnoreCase("123")) {
+  
+  @GetMapping(value = {"/admin"})
+  public String showAdminHome() {
       return "adminHome";
-    } else if (userLogin.getUserId().equalsIgnoreCase("Brijeshwar") &&
-        userLogin.getPassword().equalsIgnoreCase("123")) {
-      return "userHome";
-    } else {
-      return "error";
-    }
-
   }
+  
+  @GetMapping(value = {"/user"})
+  public String showUserHome() {
+      return "userHome";
+  } 
 }
