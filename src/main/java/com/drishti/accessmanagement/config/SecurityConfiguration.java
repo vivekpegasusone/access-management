@@ -19,15 +19,26 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         .formLogin()
         .loginPage("/login")
         .loginProcessingUrl("/home")
-        .permitAll();
+        .usernameParameter("userId")
+        .passwordParameter("password")
+        .successHandler(new AuthenticationSuccessHandler() {			
+          @Override
+          public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+            Authentication authentication) throws IOException, ServletException {
+            Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
+            if (roles.contains("ROLE_ADMIN")) {
+               response.sendRedirect("/access-management/admin");
+            } else {
+              response.sendRedirect("/access-management/user");
+            }
+          }
+        }).permitAll();
   }
 
+  @Autowired
   protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-    User.UserBuilder user = User.withDefaultPasswordEncoder();
-
-    auth.inMemoryAuthentication()
-        .withUser(user.username("vivek").password("123").roles("ADMIN"))
-        .withUser(user.username("brijeshwar").password("123").roles("USER"));
-  }
-
+  	  auth.inMemoryAuthentication()
+  	  .withUser("vivek").password("{noop}123").roles("ADMIN")
+  	  .and().withUser("amit").password("{noop}123").roles("USER");
+  } 
 }
