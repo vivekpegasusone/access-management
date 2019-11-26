@@ -10,12 +10,10 @@
         </style>
     </head>
     <body>
-	    <form:form action="${pageContext.request.contextPath}/home" modelAttribute="login">
-	        First Name : <form:input path="userId" />
-		    <form:errors path="userId" cssClass="error"></form:errors>
+    	<form:form action="${pageContext.request.contextPath}/home" method="post">
+	        Login Id : <input type="text" id="userId" name="userId" value="vivek"/>
 		    <br><br>
-	        Last Name : <form:input path="password" />
-		    <form:errors path="password" cssClass="error"></form:errors>
+	        Password : <input type="password" id="password" name="password" value="123"/>
 		    <br><br>
 	     	<input type="submit" />
 	    </form:form>
