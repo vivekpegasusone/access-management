@@ -11,12 +11,7 @@ public class LoginController {
   private static final String VIEW_NAME = "login";
 
   @GetMapping(value = "/login")
-  public ModelAndView showLogin() {
-    ModelAndView modelAndView = new ModelAndView(VIEW_NAME);
-
-    UserLogin userLogin = new UserLogin();
-    modelAndView.addObject("login", userLogin);
-
-    return modelAndView;
+  public String showLogin() {
+    return VIEW_NAME;
   }
 }
