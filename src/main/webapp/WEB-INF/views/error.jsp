@@ -7,6 +7,6 @@
         </style>
     </head>
     <body>
-	    <h1>Error Page</h1
+	    <h1>Error Page</h1>
     </body>
 </html>
