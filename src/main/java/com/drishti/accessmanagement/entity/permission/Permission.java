@@ -1,9 +1,12 @@
 package com.drishti.accessmanagement.entity.permission;
 
 import com.drishti.accessmanagement.entity.action.Action;
+import com.drishti.accessmanagement.entity.audit.embedded.Audit;
 import com.drishti.accessmanagement.entity.resource.Resource;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -24,7 +27,9 @@ public class Permission  implements Serializable {
   @Column(name = "id")
   private Long id;
 
-  @Column(name = "name", length = 50, unique = true)
+  @NotNull
+  @Size(max = 50)
+  @Column(name = "name", unique = true)
   private String name;
 
   @ManyToOne(fetch = FetchType.EAGER)
@@ -34,6 +39,9 @@ public class Permission  implements Serializable {
   @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "resourceId", nullable = false)
   private Resource resource;
+
+  @Embedded
+  private Audit audit;
 
   public Permission() {
   }
@@ -70,6 +78,14 @@ public class Permission  implements Serializable {
     this.resource = resource;
   }
 
+  public Audit getAudit() {
+    return audit;
+  }
+
+  public void setAudit(Audit audit) {
+    this.audit = audit;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -93,6 +109,7 @@ public class Permission  implements Serializable {
         ", name='" + name + '\'' +
         ", action=" + action +
         ", resource=" + resource +
+        ", audit=" + audit +
         '}';
   }
 }

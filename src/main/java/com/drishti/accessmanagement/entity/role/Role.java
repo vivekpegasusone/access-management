@@ -1,10 +1,12 @@
 package com.drishti.accessmanagement.entity.role;
 
+import com.drishti.accessmanagement.entity.audit.embedded.Audit;
 import com.drishti.accessmanagement.entity.user.User;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -20,20 +22,20 @@ public class Role implements Serializable {
   @Column(name = "id")
   private Long id;
 
-  @Column(name = "name", length = 50, unique = true)
+  @NotNull
+  @Size(max = 50)
+  @Column(name = "name", unique = true)
   private String name;
 
-  @Column(name = "description", length = 100)
+  @Size(max = 100)
+  @Column(name = "description")
   private String description;
 
   @Column(name = "enabled")
   private boolean enabled;
 
-  @Column(name = "createdDate", updatable = false)
-  private LocalDate createdDate;
-
-  @Column(name = "updatedDate")
-  private LocalDate updatedDate;
+  @Embedded
+  private Audit audit;
 
   @ManyToMany(mappedBy = "roles")
   private List<User> users = new ArrayList<>();
@@ -73,28 +75,20 @@ public class Role implements Serializable {
     this.enabled = enabled;
   }
 
-  public LocalDate getCreatedDate() {
-    return createdDate;
-  }
-
-  public void setCreatedDate(LocalDate createdDate) {
-    this.createdDate = createdDate;
-  }
-
-  public LocalDate getUpdatedDate() {
-    return updatedDate;
-  }
-
-  public void setUpdatedDate(LocalDate updatedDate) {
-    this.updatedDate = updatedDate;
-  }
-
   public List<User> getUsers() {
     return users;
   }
 
   public void setUsers(List<User> users) {
     this.users = users;
+  }
+
+  public Audit getAudit() {
+    return audit;
+  }
+
+  public void setAudit(Audit audit) {
+    this.audit = audit;
   }
 
   @Override
@@ -118,8 +112,7 @@ public class Role implements Serializable {
         ", name='" + name + '\'' +
         ", description='" + description + '\'' +
         ", enabled=" + enabled +
-        ", createdDate=" + createdDate +
-        ", updatedDate=" + updatedDate +
+        ", audit=" + audit +
         '}';
   }
 }

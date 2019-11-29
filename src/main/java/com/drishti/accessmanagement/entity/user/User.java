@@ -1,17 +1,22 @@
 package com.drishti.accessmanagement.entity.user;
 
+import com.drishti.accessmanagement.entity.audit.embedded.Audit;
+
 import com.drishti.accessmanagement.entity.role.Role;
-import org.hibernate.annotations.Cascade;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Table(name = "users")
+@EntityListeners(AuditingEntityListener.class)
 public class User implements Serializable {
 
   private static final long serialVersionUID = -1978668993823338927L;
@@ -21,29 +26,34 @@ public class User implements Serializable {
   @Column(name = "id")
   private Long id;
 
-  @Column(name = "loginId", length = 25, unique = true)
+  @NotNull
+  @Size(max = 25)
+  @Column(name = "loginId", unique = true)
   private String loginId;
 
-  @Column(name = "firstName", length = 25)
+  @Size(max = 25)
+  @Column(name = "firstName")
   private String firstName;
 
-  @Column(name = "lastName", length = 25)
+  @Size(max = 25)
+  @Column(name = "lastName")
   private String lastName;
 
-  @Column(name = "emailId", length = 50)
+  @Email
+  @Size(max = 50)
+  @Column(name = "emailId")
   private String emailId;
 
-  @Column(name = "password", length = 25)
+  @NotNull
+  @Size(max = 25)
+  @Column(name = "password")
   private String password;
 
   @Column(name = "enabled")
   private boolean enabled;
 
-  @Column(name = "createdDate", updatable = false)
-  private LocalDate createdDate;
-
-  @Column(name = "updatedDate")
-  private LocalDate updatedDate;
+  @Embedded
+  private Audit audit;
 
   @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
   @JoinTable(
@@ -112,20 +122,12 @@ public class User implements Serializable {
     this.enabled = enabled;
   }
 
-  public LocalDate getCreatedDate() {
-    return createdDate;
+  public Audit getAudit() {
+    return audit;
   }
 
-  public void setCreatedDate(LocalDate createdDate) {
-    this.createdDate = createdDate;
-  }
-
-  public LocalDate getUpdatedDate() {
-    return updatedDate;
-  }
-
-  public void setUpdatedDate(LocalDate updatedDate) {
-    this.updatedDate = updatedDate;
+  public void setAudit(Audit audit) {
+    this.audit = audit;
   }
 
   public List<Role> getRoles() {
@@ -161,13 +163,15 @@ public class User implements Serializable {
   }
 
   @Override
-  public String toString() {
+  public String  toString() {
     return "User{" +
         "id=" + id +
-        ", userId='" + loginId + '\'' +
+        ", loginId='" + loginId + '\'' +
         ", firstName='" + firstName + '\'' +
         ", lastName='" + lastName + '\'' +
+        ", emailId='" + emailId + '\'' +
         ", enabled=" + enabled +
+        ", audit=" + audit +
         '}';
   }
 }

@@ -1,8 +1,11 @@
 package com.drishti.accessmanagement.entity.resource;
 
+import com.drishti.accessmanagement.entity.audit.embedded.Audit;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
@@ -16,17 +19,16 @@ public class Resource implements Serializable {
   @Column(name = "id")
   private Long id;
 
-  @Column(name = "name", length = 50, unique = true)
+  @NotNull
+  @Size(max = 50)
+  @Column(name = "name", unique = true)
   private String name;
 
   @Column(name = "enabled")
   private boolean enabled;
 
-  @Column(name = "createdDate", updatable = false)
-  private LocalDate createdDate;
-
-  @Column(name = "updatedDate")
-  private LocalDate updatedDate;
+  @Embedded
+  private Audit audit;
 
   public Resource() {
   }
@@ -55,20 +57,12 @@ public class Resource implements Serializable {
     this.enabled = enabled;
   }
 
-  public LocalDate getCreatedDate() {
-    return createdDate;
+  public Audit getAudit() {
+    return audit;
   }
 
-  public void setCreatedDate(LocalDate createdDate) {
-    this.createdDate = createdDate;
-  }
-
-  public LocalDate getUpdatedDate() {
-    return updatedDate;
-  }
-
-  public void setUpdatedDate(LocalDate updatedDate) {
-    this.updatedDate = updatedDate;
+  public void setAudit(Audit audit) {
+    this.audit = audit;
   }
 
   @Override
@@ -91,8 +85,7 @@ public class Resource implements Serializable {
         "id=" + id +
         ", name='" + name + '\'' +
         ", enabled=" + enabled +
-        ", createdDate=" + createdDate +
-        ", updatedDate=" + updatedDate +
+        ", audit=" + audit +
         '}';
   }
 }
