@@ -53,7 +53,7 @@ public class User implements Serializable {
   private boolean enabled;
 
   @Embedded
-  private Audit audit;
+  private Audit audit = new Audit();
 
   @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
   @JoinTable(
