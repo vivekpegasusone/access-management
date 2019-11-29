@@ -6,7 +6,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 import com.drishti.accessmanagement.config.ApplicationTestConfiguration;
 
-@SpringBootTest()
+@SpringBootTest
 @ContextConfiguration(classes = {ApplicationTestConfiguration.class})
 class AccessManagementApplicationTests {
 
