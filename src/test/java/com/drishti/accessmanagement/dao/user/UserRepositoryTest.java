@@ -28,7 +28,6 @@ public class UserRepositoryTest {
     user.setEnabled(true);
     user.setPassword("gfasjf");
 
-    user.setAudit(new Audit());
     userRepository.save(user);
     
     User persistedUser = userRepository.findByLoginId("singhvh");
