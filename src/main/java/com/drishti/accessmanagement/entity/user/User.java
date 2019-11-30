@@ -52,9 +52,6 @@ public class User implements Serializable {
   @Column(name = "enabled")
   private boolean enabled;
 
-  @Embedded
-  private Audit audit = new Audit();
-
   @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
   @JoinTable(
       name = "user_roles",
@@ -63,7 +60,24 @@ public class User implements Serializable {
   )
   private List<Role> roles = new ArrayList<>();
 
+  @Embedded
+  private Audit audit = new Audit();
+
   public User() {
+  }
+
+  public User(@NotNull @Size(max = 25) String loginId,
+              @Size(max = 25) String firstName,
+              @Size(max = 25) String lastName,
+              @Email @Size(max = 50) String emailId,
+              @NotNull @Size(max = 25) String password,
+              boolean enabled) {
+    this.loginId = loginId;
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.emailId = emailId;
+    this.password = password;
+    this.enabled = enabled;
   }
 
   public Long getId() {
