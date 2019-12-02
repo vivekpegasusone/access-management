@@ -40,7 +40,7 @@ public class Role implements Serializable {
   private List<User> users = new ArrayList<>();
 
   @Embedded
-  private Audit audit;
+  private Audit audit = new Audit();
 
   public Role() {
   }
