@@ -8,7 +8,7 @@ import static com.drishti.accessmanagement.utils.ValidationUtility.notNull;
 
 public class BeanUtility {
 
-  public static <S,T> List copy(List<S> source, List<T> target, Class<T> clazz) {
+  public static <S,T> List<T> copy(List<S> source, List<T> target, Class<T> clazz) {
     notNull(source, "Source object is null. Can not copy to target object.");
     notNull(target, "Target object is null. Can not copy from source object.");
 
