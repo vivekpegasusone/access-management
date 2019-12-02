@@ -2,6 +2,7 @@ package com.drishti.accessmanagement.entity.role;
 
 import com.drishti.accessmanagement.entity.audit.embedded.Audit;
 import com.drishti.accessmanagement.entity.user.User;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -13,6 +14,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "roles")
+@EntityListeners(AuditingEntityListener.class)
 public class Role implements Serializable {
 
   private static final long serialVersionUID = -9041515827455699269L;
@@ -31,14 +33,14 @@ public class Role implements Serializable {
   @Column(name = "description")
   private String description;
 
-  @Column(name = "enabled")
-  private boolean enabled;
-
-  @Embedded
-  private Audit audit;
+  @Column(name = "active")
+  private boolean active;
 
   @ManyToMany(mappedBy = "roles")
   private List<User> users = new ArrayList<>();
+
+  @Embedded
+  private Audit audit;
 
   public Role() {
   }
@@ -67,12 +69,12 @@ public class Role implements Serializable {
     this.description = description;
   }
 
-  public boolean isEnabled() {
-    return enabled;
+  public boolean isActive() {
+    return active;
   }
 
-  public void setEnabled(boolean enabled) {
-    this.enabled = enabled;
+  public void setActive(boolean active) {
+    this.active = active;
   }
 
   public List<User> getUsers() {
@@ -111,7 +113,7 @@ public class Role implements Serializable {
         "id=" + id +
         ", name='" + name + '\'' +
         ", description='" + description + '\'' +
-        ", enabled=" + enabled +
+        ", active=" + active +
         ", audit=" + audit +
         '}';
   }

@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 
@@ -37,21 +39,17 @@ public class UserRepositoryTest {
     User user = new User(loginId, firstName, lastName, emailId, password, true);
     user = userRepository.save(user);
 
-    User savedUser = userRepository.findByLoginId(user.getLoginId());
+    Optional<User> optionalUser = userRepository.findByLoginId(user.getLoginId());
 
-    System.out.println(savedUser.getAudit().getCreatedOn());
-    System.out.println(savedUser.getAudit().getCreatedBy());
-    System.out.println(savedUser.getAudit().getUpdatedOn());
-    System.out.println(savedUser.getAudit().getUpdatedBy());
+    assertThat(optionalUser.isPresent()).isTrue();
 
-    System.out.println(savedUser);
-
+    User savedUser = optionalUser.get();
     assertThat(loginId).isEqualTo(savedUser.getLoginId());
     assertThat(firstName).isEqualTo(savedUser.getFirstName());
     assertThat(lastName).isEqualTo(savedUser.getLastName());
     assertThat(emailId).isEqualTo(savedUser.getEmailId());
     assertThat(password).isEqualTo(savedUser.getPassword());
-    assertThat(savedUser.isEnabled()).isTrue();
+    assertThat(savedUser.isActive()).isTrue();
 
     assertThat(savedUser.getAudit().getCreatedOn()).isNotNull();
     assertThat(savedUser.getAudit().getCreatedBy()).isNotNull();

@@ -24,8 +24,8 @@ public class Resource implements Serializable {
   @Column(name = "name", unique = true)
   private String name;
 
-  @Column(name = "enabled")
-  private boolean enabled;
+  @Column(name = "active")
+  private boolean active;
 
   @Embedded
   private Audit audit;
@@ -49,12 +49,12 @@ public class Resource implements Serializable {
     this.name = name;
   }
 
-  public boolean isEnabled() {
-    return enabled;
+  public boolean isActive() {
+    return active;
   }
 
-  public void setEnabled(boolean enabled) {
-    this.enabled = enabled;
+  public void setActive(boolean active) {
+    this.active = active;
   }
 
   public Audit getAudit() {
@@ -84,7 +84,7 @@ public class Resource implements Serializable {
     return "Resource{" +
         "id=" + id +
         ", name='" + name + '\'' +
-        ", enabled=" + enabled +
+        ", active=" + active +
         ", audit=" + audit +
         '}';
   }

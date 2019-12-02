@@ -49,8 +49,8 @@ public class User implements Serializable {
   @Column(name = "password")
   private String password;
 
-  @Column(name = "enabled")
-  private boolean enabled;
+  @Column(name = "active")
+  private boolean active;
 
   @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
   @JoinTable(
@@ -71,13 +71,13 @@ public class User implements Serializable {
               @Size(max = 25) String lastName,
               @Email @Size(max = 50) String emailId,
               @NotNull @Size(max = 25) String password,
-              boolean enabled) {
+              boolean active) {
     this.loginId = loginId;
     this.firstName = firstName;
     this.lastName = lastName;
     this.emailId = emailId;
     this.password = password;
-    this.enabled = enabled;
+    this.active = active;
   }
 
   public Long getId() {
@@ -128,12 +128,12 @@ public class User implements Serializable {
     this.password = password;
   }
 
-  public boolean isEnabled() {
-    return enabled;
+  public boolean isActive() {
+    return active;
   }
 
-  public void setEnabled(boolean enabled) {
-    this.enabled = enabled;
+  public void setActive(boolean active) {
+    this.active = active;
   }
 
   public Audit getAudit() {
@@ -184,7 +184,7 @@ public class User implements Serializable {
         ", firstName='" + firstName + '\'' +
         ", lastName='" + lastName + '\'' +
         ", emailId='" + emailId + '\'' +
-        ", enabled=" + enabled +
+        ", active=" + active +
         ", audit=" + audit +
         '}';
   }

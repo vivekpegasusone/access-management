@@ -31,8 +31,8 @@ public class Action implements Serializable {
   @Column(name = "description")
   private String description;
 
-  @Column(name = "enabled")
-  private boolean enabled;
+  @Column(name = "active")
+  private boolean active;
 
   @Embedded
   private Audit audit;
@@ -64,12 +64,12 @@ public class Action implements Serializable {
     this.description = description;
   }
 
-  public boolean isEnabled() {
-    return enabled;
+  public boolean isActive() {
+    return active;
   }
 
-  public void setEnabled(boolean enabled) {
-    this.enabled = enabled;
+  public void setActive(boolean active) {
+    this.active = active;
   }
 
   public Audit getAudit() {
@@ -100,7 +100,7 @@ public class Action implements Serializable {
         "id=" + id +
         ", name='" + name + '\'' +
         ", description='" + description + '\'' +
-        ", enabled=" + enabled +
+        ", active=" + active +
         ", audit=" + audit +
         '}';
   }
