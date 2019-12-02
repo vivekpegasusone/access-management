@@ -15,6 +15,7 @@ import java.util.List;
 import static com.drishti.accessmanagement.utility.UserFixture.anyUser;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@SpringBootTest
 class UserServiceTest {
 
   private List<User> users;
