@@ -39,8 +39,7 @@ class UserServiceTest {
     List<UserView> userView = userService.getUsers();
     assertThat(userView).isNotEmpty();
     assertThat(userView).hasSize(2);
-    assertThat(userView).element(0).isEqualTo(users.get(0));
-    assertThat(userView).element(1).isEqualTo(users.get(1));
+    compareUsers(userViews, users);
 
     users.clear();
     userView = userService.getUsers();
@@ -67,4 +66,36 @@ class UserServiceTest {
   @Test
   void deleteUserById() {
   }
+  
+  private void compareUsers(List<UserView> userViews, List<User> users) {
+		for(int i = 0; i < userViews.size(); i++) {
+			UserView uv = userViews.get(i);
+			User u = users.get(i);
+			compareUser(uv, u);
+		}
+	}
+	
+	private void compareUser(UserView uv, User u) {
+		assertThat(uv.getId()).isEqualTo(u.getId());
+		assertThat(uv.getLoginId()).isEqualTo(u.getLoginId());
+		assertThat(uv.getFirstName()).isEqualTo(u.getFirstName());
+		assertThat(uv.getLastName()).isEqualTo(u.getLastName());
+		assertThat(uv.getEmailId()).isEqualTo(u.getEmailId());
+		assertThat(uv.isActive()).isEqualTo(u.isActive());
+		
+		for(int i = 0; i < uv.getRoles().size(); i++) {
+			RoleView rv = uv.getRoles().get(i);
+			Role r = u.getRoles().get(i);
+			compareRoleState(rv, r);
+		}
+		
+		
+	}
+
+	private void compareRoleState(RoleView rv, Role r) {
+		assertThat(rv.getId()).isEqualTo(r.getId());
+		assertThat(rv.getName()).isEqualTo(r.getName());
+		assertThat(rv.getDescription()).isEqualTo(r.getDescription());
+		assertThat(rv.isActive()).isEqualTo(r.isActive());
+	}
 }
