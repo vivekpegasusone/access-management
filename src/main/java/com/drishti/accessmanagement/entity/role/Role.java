@@ -45,6 +45,16 @@ public class Role implements Serializable {
   public Role() {
   }
 
+  public Role(Long id,
+              @NotNull @Size(max = 50) String name,
+              @Size(max = 100) String description,
+              boolean active) {
+    this.id = id;
+    this.name = name;
+    this.description = description;
+    this.active = active;
+  }
+
   public Long getId() {
     return id;
   }

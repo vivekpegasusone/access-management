@@ -1,19 +1,20 @@
 package com.drishti.accessmanagement.dao.user;
 
-import com.drishti.accessmanagement.AccessManagementApplication;
 import com.drishti.accessmanagement.config.ApplicationTestConfiguration;
 import com.drishti.accessmanagement.entity.user.User;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.ContextConfiguration;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 
-@SpringBootTest(classes = {AccessManagementApplication.class, ApplicationTestConfiguration.class})
+@DataJpaTest
+@ContextConfiguration(classes = {ApplicationTestConfiguration.class})
 public class UserRepositoryTest {
 
   private static String loginId;
@@ -36,24 +37,27 @@ public class UserRepositoryTest {
 
   @Test
   void testPersistAndRetrieveUser(){
-    User user = new User(loginId, firstName, lastName, emailId, password, true);
+    User user = new User(loginId, firstName, lastName, emailId, true);
+    user.setPassword(password);
     user = userRepository.save(user);
 
     Optional<User> optionalUser = userRepository.findByLoginId(user.getLoginId());
 
     assertThat(optionalUser.isPresent()).isTrue();
 
-    User savedUser = optionalUser.get();
-    assertThat(loginId).isEqualTo(savedUser.getLoginId());
-    assertThat(firstName).isEqualTo(savedUser.getFirstName());
-    assertThat(lastName).isEqualTo(savedUser.getLastName());
-    assertThat(emailId).isEqualTo(savedUser.getEmailId());
-    assertThat(password).isEqualTo(savedUser.getPassword());
-    assertThat(savedUser.isActive()).isTrue();
+    if(optionalUser.isPresent()) {
+      User savedUser = optionalUser.get();
+      assertThat(loginId).isEqualTo(savedUser.getLoginId());
+      assertThat(firstName).isEqualTo(savedUser.getFirstName());
+      assertThat(lastName).isEqualTo(savedUser.getLastName());
+      assertThat(emailId).isEqualTo(savedUser.getEmailId());
+      assertThat(password).isEqualTo(savedUser.getPassword());
+      assertThat(savedUser.isActive()).isTrue();
 
-    assertThat(savedUser.getAudit().getCreatedOn()).isNotNull();
-    assertThat(savedUser.getAudit().getCreatedBy()).isNotNull();
-    assertThat(savedUser.getAudit().getUpdatedOn()).isNotNull();
-    assertThat(savedUser.getAudit().getUpdatedBy()).isNotNull();
+      assertThat(savedUser.getAudit().getCreatedOn()).isNotNull();
+      assertThat(savedUser.getAudit().getCreatedBy()).isNotNull();
+      assertThat(savedUser.getAudit().getUpdatedOn()).isNotNull();
+      assertThat(savedUser.getAudit().getUpdatedBy()).isNotNull();
+    }
   }
 }

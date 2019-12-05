@@ -2,7 +2,9 @@ package com.drishti.accessmanagement.service.role;
 
 import com.drishti.accessmanagement.dao.role.RoleRepository;
 import com.drishti.accessmanagement.dto.role.RoleView;
+import com.drishti.accessmanagement.dto.user.UserView;
 import com.drishti.accessmanagement.entity.role.Role;
+import com.drishti.accessmanagement.entity.user.User;
 import com.drishti.accessmanagement.exception.RecordNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,14 +15,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.drishti.accessmanagement.utils.BeanUtility.copy;
-import static org.springframework.beans.BeanUtils.copyProperties;
-
 @Service
 class RoleServiceImpl implements RoleService {
 
+  private final RoleRepository roleRepository;
+
   @Autowired
-  private RoleRepository roleRepository;
+  RoleServiceImpl(RoleRepository roleRepository) {
+    this.roleRepository = roleRepository;
+  }
 
 
   @Override
@@ -28,7 +31,7 @@ class RoleServiceImpl implements RoleService {
     List<Role> roleList = roleRepository.findByActiveTrue();
 
     if (roleList.size() > 0) {
-      return copy(roleList, new ArrayList<>(), RoleView.class);
+      return prepareRoleViewsFromRoles(roleList);
     } else {
       return new ArrayList<>();
     }
@@ -63,19 +66,56 @@ class RoleServiceImpl implements RoleService {
   }
 
   private RoleView prepareRoleView(final Role role) {
-    RoleView roleView = new RoleView();
-    copyProperties(role, roleView);
-    return roleView;
+    return prepareRoleViewFromRole(role);
   }
 
-  private RoleView saveOrUpdateRole(RoleView roleView) {
-    Role role = new Role();
-    copyProperties(roleView, role);
+  private RoleView saveOrUpdateRole(final RoleView roleView) {
+    Role role = prepareRoleFromRoleView(roleView);
+    Role savedRole = roleRepository.save(role);
+    return prepareRoleViewFromRole(savedRole);
+  }
 
-    Role savedUser = roleRepository.save(role);
+  private List<RoleView> prepareRoleViewsFromRoles(final List<Role> roles) {
+    List<RoleView> roleViews = new ArrayList<>(roles.size());
 
-    RoleView rv = new RoleView();
-    copyProperties(savedUser, rv);
-    return rv;
+    roles.forEach(r -> {
+      RoleView roleView = prepareRoleViewFromRole(r);
+      roleViews.add(roleView);
+    });
+
+    return roleViews;
+  }
+
+  private Role prepareRoleFromRoleView(RoleView rv) {
+    Role role = new Role(rv.getId(), rv.getName(), rv.getDescription(), rv.isActive());
+
+    List<UserView> userViews = rv.getUsers();
+    List<User> users = new ArrayList<>(userViews.size());
+
+    userViews.forEach(u -> {
+      User user = new User(u.getId(), u.getLoginId(), u.getFirstName(), u.getLastName(), u.getEmailId(), u.isActive());
+      users.add(user);
+    });
+
+    role.setUsers(users);
+
+    return role;
+  }
+
+  private RoleView prepareRoleViewFromRole(Role role) {
+    RoleView roleView = new RoleView(role.getId(), role.getName(), role.getDescription(), role.isActive());
+
+    List<User> users = role.getUsers();
+    List<UserView> userViews = new ArrayList<>(users.size());
+
+    users.forEach(user -> {
+      UserView userView = new UserView( user.getId(), user.getLoginId(), user.getFirstName(), user.getLastName(),
+          user.getEmailId(), user.isActive());
+      userViews.add(userView);
+    });
+
+    roleView.setUsers(userViews);
+
+    return roleView;
   }
 }

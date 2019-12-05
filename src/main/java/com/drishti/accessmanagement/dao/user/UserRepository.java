@@ -16,9 +16,9 @@ public interface UserRepository extends JpaRepository<User, Long>, UserRepositor
 
   List<User> findByActiveFalse();
 
-  List<User> findByNameStartingWith(String prefix);
-
-  List<User> findByNameEndingWith(String suffix);
-
-  List<User> findByNameContaining(String infix);
+//  List<User> findByNameStartingWith(String prefix);
+//
+//  List<User> findByNameEndingWith(String suffix);
+//
+//  List<User> findByNameContaining(String infix);
 }

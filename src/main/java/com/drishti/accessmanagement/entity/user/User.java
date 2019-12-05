@@ -70,13 +70,25 @@ public class User implements Serializable {
               @Size(max = 25) String firstName,
               @Size(max = 25) String lastName,
               @Email @Size(max = 50) String emailId,
-              @NotNull @Size(max = 25) String password,
               boolean active) {
     this.loginId = loginId;
     this.firstName = firstName;
     this.lastName = lastName;
     this.emailId = emailId;
-    this.password = password;
+    this.active = active;
+  }
+
+  public User(Long id,
+              @NotNull @Size(max = 25) String loginId,
+              @Size(max = 25) String firstName,
+              @Size(max = 25) String lastName,
+              @Email @Size(max = 50) String emailId,
+              boolean active) {
+    this.id = id;
+    this.loginId = loginId;
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.emailId = emailId;
     this.active = active;
   }
 

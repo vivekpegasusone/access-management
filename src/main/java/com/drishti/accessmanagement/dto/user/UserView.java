@@ -35,7 +35,23 @@ public class UserView {
 
   private List<RoleView> roles = new ArrayList<>();
 
-  public UserView() {
+  public UserView(@NotBlank(message = "User login id can not be empty.")
+                  @Size(max = 25, message = "User login id must be less then or equal to 25 characters.") String loginId) {
+    this.loginId = loginId;
+  }
+
+  public UserView(Long id,
+                  @NotBlank(message = "User login id can not be empty.") @Size(max = 25, message = "User login id must be less then or equal to 25 characters.") String loginId,
+                  @Size(max = 25, message = "User first name must be less then or equal to 25 characters.") String firstName,
+                  @Size(max = 25, message = "User last name must be less then or equal to 25 characters.") String lastName,
+                  @Email @Size(max = 50, message = "User email id must be less then or equal to 50 characters.") String emailId,
+                  boolean active) {
+    this.id = id;
+    this.loginId = loginId;
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.emailId = emailId;
+    this.active = active;
   }
 
   public Long getId() {
@@ -114,7 +130,6 @@ public class UserView {
         ", firstName='" + firstName + '\'' +
         ", lastName='" + lastName + '\'' +
         ", emailId='" + emailId + '\'' +
-        ", password='" + password + '\'' +
         ", active=" + active +
         '}';
   }

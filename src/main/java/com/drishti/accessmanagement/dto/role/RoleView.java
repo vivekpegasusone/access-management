@@ -1,6 +1,6 @@
 package com.drishti.accessmanagement.dto.role;
 
-import com.drishti.accessmanagement.entity.user.User;
+import com.drishti.accessmanagement.dto.user.UserView;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -20,9 +20,21 @@ public class RoleView {
 
   private boolean active;
 
-  private List<User> users = new ArrayList<>();
+  private List<UserView> users = new ArrayList<>();
 
-  public RoleView() {
+  public RoleView(@NotBlank(message = "Role name can not be empty.")
+                  @Size(max = 50, message = "Role name must be less then or equal to 50 characters.") String name) {
+    this.name = name;
+  }
+
+  public RoleView(Long id,
+                  @NotBlank(message = "Role name can not be empty.") @Size(max = 50, message = "Role name must be less then or equal to 50 characters.") String name,
+                  @Size(max = 100, message = "Role description must be less then or equal to 100 characters.") String description,
+                  boolean active) {
+    this.id = id;
+    this.name = name;
+    this.description = description;
+    this.active = active;
   }
 
   public Long getId() {
@@ -57,16 +69,16 @@ public class RoleView {
     this.active = active;
   }
 
-  public List<User> getUsers() {
+  public List<UserView> getUsers() {
     return users;
   }
 
-  public void setUsers(List<User> users) {
+  public void setUsers(List<UserView> users) {
     this.users = users;
   }
 
-  public void addUsers(User user) {
-    this.users.add(user);
+  public void addUser(UserView userView) {
+    this.users.add(userView);
   }
 
   @Override
