@@ -8,10 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ContextConfiguration;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
 
 @DataJpaTest
 @ContextConfiguration(classes = {ApplicationTestConfiguration.class})
@@ -28,17 +28,18 @@ public class UserRepositoryTest {
 
   @BeforeAll
   public static void beforeAllTests(){
-    loginId = anyString();
-    firstName = anyString();
-    lastName = anyString();
-    password = anyString();
+    loginId = "TestLoginId";
+    firstName = "TestFirstName";
+    lastName = "TestLastName";
+    password = "TestPassword";
     emailId = "test@abc.com";
   }
 
   @Test
-  void testPersistAndRetrieveUser(){
-    User user = new User(loginId, firstName, lastName, emailId, true);
-    user.setPassword(password);
+  public void testFindByLoginId(){
+    User user = new User.UserBuilder(loginId).setFirstName(firstName).setLastName(lastName)
+        .setEmailId(emailId).setActive(true).setPassword(password).build();
+
     user = userRepository.save(user);
 
     Optional<User> optionalUser = userRepository.findByLoginId(user.getLoginId());
@@ -59,5 +60,29 @@ public class UserRepositoryTest {
       assertThat(savedUser.getAudit().getUpdatedOn()).isNotNull();
       assertThat(savedUser.getAudit().getUpdatedBy()).isNotNull();
     }
+  }
+
+  @Test
+  public void testFindByActiveTrue(){
+    User user = new User.UserBuilder(loginId).setFirstName(firstName).setLastName(lastName)
+        .setEmailId(emailId).setActive(true).setPassword(password).build();
+
+    userRepository.save(user);
+    List<User> users = userRepository.findByActiveTrue();
+
+    assertThat(users).isNotEmpty();
+    assertThat(users.size()).isEqualTo(1);
+  }
+
+  @Test
+  public void testFindByActiveFalse(){
+    User user = new User.UserBuilder(loginId).setFirstName(firstName).setLastName(lastName)
+        .setEmailId(emailId).setActive(false).setPassword(password).build();
+
+    userRepository.save(user);
+    List<User> users = userRepository.findByActiveFalse();
+
+    assertThat(users).isNotEmpty();
+    assertThat(users.size()).isEqualTo(1);
   }
 }

@@ -3,10 +3,7 @@ package com.drishti.accessmanagement.entity.action;
 import com.drishti.accessmanagement.entity.audit.embedded.Audit;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -22,12 +19,9 @@ public class Action implements Serializable {
   @Column(name = "id")
   private Long id;
 
-  @NotNull
-  @Size(max = 50)
   @Column(name = "name", unique = true)
   private String name;
 
-  @Size(max = 100)
   @Column(name = "description")
   private String description;
 
@@ -35,9 +29,16 @@ public class Action implements Serializable {
   private boolean active;
 
   @Embedded
-  private Audit audit;
+  private Audit audit = new Audit();
 
-  public Action() {
+  protected Action() {
+  }
+
+  private Action(ActionBuilder builder) {
+    this.setId(builder.id);
+    this.setName(builder.name);
+    this.setDescription(builder.description);
+    this.setActive(builder.active);
   }
 
   public Long getId() {
@@ -103,5 +104,35 @@ public class Action implements Serializable {
         ", active=" + active +
         ", audit=" + audit +
         '}';
+  }
+
+  public static class ActionBuilder {
+    private Long id;
+    private String name;
+    private String description;
+    private boolean active;
+
+    public ActionBuilder(String name) {
+      this.name = name;
+    }
+
+    public ActionBuilder setId(Long id) {
+      this.id = id;
+      return this;
+    }
+
+    public ActionBuilder setDescription(String description) {
+      this.description = description;
+      return this;
+    }
+
+    public ActionBuilder setActive(boolean active) {
+      this.active = active;
+      return this;
+    }
+
+    public Action build() {
+      return new Action(this);
+    }
   }
 }

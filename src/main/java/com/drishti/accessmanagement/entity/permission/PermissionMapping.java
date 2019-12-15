@@ -2,6 +2,7 @@ package com.drishti.accessmanagement.entity.permission;
 
 import com.drishti.accessmanagement.entity.audit.embedded.Audit;
 import com.drishti.accessmanagement.entity.role.Role;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -9,6 +10,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "permission_mappings")
+@EntityListeners(AuditingEntityListener.class)
 public class PermissionMapping implements Serializable {
 
   private static final long serialVersionUID = -7084677788576384413L;
@@ -27,7 +29,16 @@ public class PermissionMapping implements Serializable {
   private Permission permission;
 
   @Embedded
-  private Audit audit;
+  private Audit audit = new Audit();
+
+  protected PermissionMapping() {
+  }
+
+  private PermissionMapping(PermissionMappingBuilder builder) {
+    this.setId(builder.id);
+    this.setRole(builder.role);
+    this.setPermission(builder.permission);
+  }
 
   public Long getId() {
     return id;
@@ -82,5 +93,30 @@ public class PermissionMapping implements Serializable {
         ", permission=" + permission +
         ", audit=" + audit +
         '}';
+  }
+
+  public static class PermissionMappingBuilder {
+    private Long id;
+    private Role role;
+    private Permission permission;
+
+    public PermissionMappingBuilder setId(Long id) {
+      this.id = id;
+      return this;
+    }
+
+    public PermissionMappingBuilder setRole(Role role) {
+      this.role = role;
+      return this;
+    }
+
+    public PermissionMappingBuilder setPermission(Permission permission) {
+      this.permission = permission;
+      return this;
+    }
+
+    public PermissionMapping build() {
+      return new PermissionMapping(this);
+    }
   }
 }

@@ -30,7 +30,7 @@ class RoleServiceImpl implements RoleService {
   public List<RoleView> getRoles() {
     List<Role> roleList = roleRepository.findByActiveTrue();
 
-    if (roleList.size() > 0) {
+    if (!roleList.isEmpty()) {
       return prepareRoleViewsFromRoles(roleList);
     } else {
       return new ArrayList<>();
@@ -38,7 +38,7 @@ class RoleServiceImpl implements RoleService {
   }
 
   @Override
-  public RoleView findRoleById(Long id) throws RecordNotFoundException {
+  public RoleView findRoleById(Long id) {
     Optional<Role> optionalRole = roleRepository.findById(id);
 
     if (optionalRole.isPresent()) {
@@ -56,12 +56,12 @@ class RoleServiceImpl implements RoleService {
 
   @Override
   @Transactional(propagation= Propagation.REQUIRED)
-  public RoleView updateRole(RoleView roleView) throws RecordNotFoundException {
+  public RoleView updateRole(RoleView roleView) {
     return saveOrUpdateRole(roleView);
   }
 
   @Override
-  public void deleteRoleById(Long id) throws RecordNotFoundException {
+  public void deleteRoleById(Long id) {
     roleRepository.deleteById(id);
   }
 
@@ -87,15 +87,18 @@ class RoleServiceImpl implements RoleService {
   }
 
   private Role prepareRoleFromRoleView(RoleView rv) {
-    Role role = new Role(rv.getId(), rv.getName(), rv.getDescription(), rv.isActive());
+    Role role = new Role.RoleBuilder(rv.getName())
+        .setId(rv.getId())
+        .setDescription(rv.getDescription())
+        .setActive(rv.isActive()).build();
 
     List<UserView> userViews = rv.getUsers();
     List<User> users = new ArrayList<>(userViews.size());
 
-    userViews.forEach(u -> {
-      User user = new User(u.getId(), u.getLoginId(), u.getFirstName(), u.getLastName(), u.getEmailId(), u.isActive());
-      users.add(user);
-    });
+    userViews.forEach(u ->
+      users.add(new User.UserBuilder(u.getLoginId()).setId(u.getId()).setFirstName(u.getFirstName())
+          .setLastName(u.getLastName()).setEmailId(u.getEmailId()).setActive(u.isActive()).build())
+    );
 
     role.setUsers(users);
 

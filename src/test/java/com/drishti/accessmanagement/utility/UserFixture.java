@@ -5,47 +5,32 @@ import com.drishti.accessmanagement.entity.user.User;
 
 import java.util.Random;
 
-import static com.drishti.accessmanagement.utility.RoleFixture.anyRole;
-
 public class UserFixture {
 
   private static Random random = new Random();
 
   public static User anyUser() {
-    User user = new User();
-    user.setId(random.nextLong());
-    user.setLoginId("sgfuashf");
-    user.setFirstName("ieuyfsncs");
-    user.setLastName("sdjfsiajdfnh");
-    user.setPassword("mkjugfgvb");
-    user.setEmailId("pokjfkn@abc.com");
-    user.setActive(true);
+    int counter = random.nextInt(1000);
+    User user = new User.UserBuilder("user" + counter)
+        .setId(Long.valueOf(counter))
+        .setFirstName("User")
+        .setLastName(" " + counter)
+        .setPassword("password" + counter)
+        .setEmailId("user" + counter + "@abc.com")
+        .setActive(true).build();
 
-    Role role1 = anyRole();
-    Role role2 = anyRole();
+    counter = counter + 1;
+    user.addRole(new Role.RoleBuilder("role" + counter)
+        .setId(Long.valueOf(counter))
+        .setDescription("This is test role " + counter + ". ")
+        .setActive(true).build());
 
-    user.addRole(role1);
-    user.addRole(role2);
+    counter = counter + 1;
+    user.addRole(new Role.RoleBuilder("role" + counter)
+        .setId(Long.valueOf(counter))
+        .setDescription("This is test role " + counter + ". ")
+        .setActive(true).build());
 
     return user;
   }
-
-//  public static User anyUser() {
-//    User user = new User();
-//    user.setId(anyLong());
-//    user.setLoginId(anyString());
-//    user.setFirstName(anyString());
-//    user.setLastName(anyString());
-//    user.setPassword(anyString());
-//    user.setEmailId(anyString() + eq("@abc.com"));
-//    user.setActive(eq(true));
-//
-//    Role role1 = anyRole();
-//    Role role2 = anyRole();
-//
-//    user.addRole(role1);
-//    user.addRole(role2);
-//
-//    return user;
-//  }
 }

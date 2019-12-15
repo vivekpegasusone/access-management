@@ -5,8 +5,6 @@ import com.drishti.accessmanagement.entity.user.User;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,12 +22,9 @@ public class Role implements Serializable {
   @Column(name = "id")
   private Long id;
 
-  @NotNull
-  @Size(max = 50)
   @Column(name = "name", unique = true)
   private String name;
 
-  @Size(max = 100)
   @Column(name = "description")
   private String description;
 
@@ -42,17 +37,15 @@ public class Role implements Serializable {
   @Embedded
   private Audit audit = new Audit();
 
-  public Role() {
+  protected Role() {
   }
 
-  public Role(Long id,
-              @NotNull @Size(max = 50) String name,
-              @Size(max = 100) String description,
-              boolean active) {
-    this.id = id;
-    this.name = name;
-    this.description = description;
-    this.active = active;
+  private Role(RoleBuilder builder) {
+    this.id = builder.id;
+    this.name = builder.name;
+    this.description = builder.description;
+    this.active = builder.active;
+    this.users = builder.users;
   }
 
   public Long getId() {
@@ -126,5 +119,47 @@ public class Role implements Serializable {
         ", active=" + active +
         ", audit=" + audit +
         '}';
+  }
+
+  public static class RoleBuilder {
+    private Long id;
+    private boolean active;
+    private String name;
+    private String description;
+
+    private List<User> users = new ArrayList<>();
+
+    public RoleBuilder(String name) {
+      this.name = name;
+    }
+
+    public RoleBuilder setId(Long id) {
+      this.id = id;
+      return this;
+    }
+
+    public RoleBuilder setActive(boolean active) {
+      this.active = active;
+      return this;
+    }
+
+    public RoleBuilder setDescription(String description) {
+      this.description = description;
+      return this;
+    }
+
+    public RoleBuilder setUsers(List<User> users) {
+      this.users = users;
+      return this;
+    }
+
+    public RoleBuilder addUsers(User user) {
+      this.users.add(user);
+      return this;
+    }
+
+    public Role build() {
+      return new Role(this);
+    }
   }
 }

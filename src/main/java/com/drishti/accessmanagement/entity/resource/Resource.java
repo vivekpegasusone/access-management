@@ -1,15 +1,15 @@
 package com.drishti.accessmanagement.entity.resource;
 
 import com.drishti.accessmanagement.entity.audit.embedded.Audit;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
 @Table(name = "resources")
+@EntityListeners(AuditingEntityListener.class)
 public class Resource implements Serializable {
 
   private static final long serialVersionUID = 4982374360510911739L;
@@ -19,8 +19,6 @@ public class Resource implements Serializable {
   @Column(name = "id")
   private Long id;
 
-  @NotNull
-  @Size(max = 50)
   @Column(name = "name", unique = true)
   private String name;
 
@@ -28,9 +26,15 @@ public class Resource implements Serializable {
   private boolean active;
 
   @Embedded
-  private Audit audit;
+  private Audit audit = new Audit();
 
-  public Resource() {
+  protected Resource() {
+  }
+
+  private Resource(ResourceBuilder builder) {
+    this.setId(builder.id);
+    this.setName(builder.name);
+    this.setActive(builder.active);
   }
 
   public Long getId() {
@@ -87,5 +91,34 @@ public class Resource implements Serializable {
         ", active=" + active +
         ", audit=" + audit +
         '}';
+  }
+
+  public static class ResourceBuilder {
+    private Long id;
+    private String name;
+    private boolean active;
+
+    public ResourceBuilder(String name) {
+      this.name = name;
+    }
+
+    public ResourceBuilder setId(Long id) {
+      this.id = id;
+      return this;
+    }
+
+    public ResourceBuilder setName(String name) {
+      this.name = name;
+      return this;
+    }
+
+    public ResourceBuilder setActive(boolean active) {
+      this.active = active;
+      return this;
+    }
+
+    public Resource build() {
+      return new Resource(this);
+    }
   }
 }

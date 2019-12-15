@@ -3,10 +3,9 @@ package com.drishti.accessmanagement.entity.permission;
 import com.drishti.accessmanagement.entity.action.Action;
 import com.drishti.accessmanagement.entity.audit.embedded.Audit;
 import com.drishti.accessmanagement.entity.resource.Resource;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -18,6 +17,7 @@ import java.util.Objects;
         name = "UK_Resource_Action")
     }
 )
+@EntityListeners(AuditingEntityListener.class)
 public class Permission  implements Serializable {
 
   private static final long serialVersionUID = 992320152375313938L;
@@ -27,8 +27,6 @@ public class Permission  implements Serializable {
   @Column(name = "id")
   private Long id;
 
-  @NotNull
-  @Size(max = 50)
   @Column(name = "name", unique = true)
   private String name;
 
@@ -41,9 +39,16 @@ public class Permission  implements Serializable {
   private Resource resource;
 
   @Embedded
-  private Audit audit;
+  private Audit audit = new Audit();
 
-  public Permission() {
+  protected Permission() {
+  }
+
+  private Permission(PermissionBuilder builder) {
+    this.setId(builder.id);
+    this.setName(builder.name);
+    this.setAction(builder.action);
+    this.setResource(builder.resource);
   }
 
   public Long getId() {
@@ -111,5 +116,40 @@ public class Permission  implements Serializable {
         ", resource=" + resource +
         ", audit=" + audit +
         '}';
+  }
+
+  public static class PermissionBuilder {
+    private Long id;
+    private String name;
+    private Action action;
+    private Resource resource;
+
+    public PermissionBuilder(String name) {
+      this.name = name;
+    }
+
+    public PermissionBuilder setId(Long id) {
+      this.id = id;
+      return this;
+    }
+
+    public PermissionBuilder setName(String name) {
+      this.name = name;
+      return this;
+    }
+
+    public PermissionBuilder setAction(Action action) {
+      this.action = action;
+      return this;
+    }
+
+    public PermissionBuilder setResource(Resource resource) {
+      this.resource = resource;
+      return this;
+    }
+
+    public Permission build() {
+      return new Permission(this);
+    }
   }
 }

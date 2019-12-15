@@ -4,7 +4,6 @@ import com.drishti.accessmanagement.dto.role.RoleView;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,13 +26,12 @@ public class UserView {
   @Size(max = 50, message = "User email id must be less then or equal to 50 characters.")
   private String emailId;
 
-  @NotNull(message = "User password can not be null.")
   @Size(max = 25, message = "User password must be less then or equal to 25 characters.")
   private String password;
 
   private boolean active;
 
-  private List<RoleView> roles = new ArrayList<>();
+  private List<RoleView> roleViews = new ArrayList<>();
 
   public UserView(@NotBlank(message = "User login id can not be empty.")
                   @Size(max = 25, message = "User login id must be less then or equal to 25 characters.") String loginId) {
@@ -110,16 +108,16 @@ public class UserView {
     this.active = active;
   }
 
-  public List<RoleView> getRoles() {
-    return roles;
+  public List<RoleView> getRoleViews() {
+    return roleViews;
   }
 
-  public void setRoles(List<RoleView> roles) {
-    this.roles = roles;
+  public void setRoleViews(List<RoleView> roleViews) {
+    this.roleViews = roleViews;
   }
 
-  public void addRole(RoleView role) {
-    this.roles.add(role);
+  public void addRoleView(RoleView roleView) {
+    this.roleViews.add(roleView);
   }
 
   @Override
