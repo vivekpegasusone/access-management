@@ -107,11 +107,6 @@ public class Resource implements Serializable {
       return this;
     }
 
-    public ResourceBuilder setName(String name) {
-      this.name = name;
-      return this;
-    }
-
     public ResourceBuilder setActive(boolean active) {
       this.active = active;
       return this;
