@@ -20,7 +20,7 @@ public class RoleView {
 
   private boolean active;
 
-  private List<UserView> users = new ArrayList<>();
+  private List<UserView> userViews = new ArrayList<>();
 
   public RoleView(@NotBlank(message = "Role name can not be empty.")
                   @Size(max = 50, message = "Role name must be less then or equal to 50 characters.") String name) {
@@ -69,16 +69,16 @@ public class RoleView {
     this.active = active;
   }
 
-  public List<UserView> getUsers() {
-    return users;
+  public List<UserView> getUserViews() {
+    return userViews;
   }
 
-  public void setUsers(List<UserView> users) {
-    this.users = users;
+  public void setUserViews(List<UserView> userViews) {
+    this.userViews = userViews;
   }
 
-  public void addUser(UserView userView) {
-    this.users.add(userView);
+  public void addUserView(UserView userView) {
+    this.userViews.add(userView);
   }
 
   @Override

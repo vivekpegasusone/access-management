@@ -16,19 +16,19 @@ public class Audit implements Serializable {
   private static final long serialVersionUID = -6204251799233984847L;
 
   @CreatedDate
-  @Column(name = "created_on", nullable = false, updatable = false)
+  @Column(name = "createdOn", nullable = false, updatable = false)
   private LocalDateTime createdOn;
 
   @CreatedBy
-  @Column(name = "created_by", nullable = false, updatable = false)
+  @Column(name = "createdBy", nullable = false, updatable = false)
   private String createdBy;
 
   @LastModifiedDate
-  @Column(name = "updated_on", nullable = false)
+  @Column(name = "updatedOn", nullable = false)
   private LocalDateTime updatedOn;
 
   @LastModifiedBy
-  @Column(name = "updated_by", nullable = false)
+  @Column(name = "updatedBy", nullable = false)
   private String updatedBy;
 
   public LocalDateTime getCreatedOn() {

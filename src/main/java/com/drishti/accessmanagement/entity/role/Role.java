@@ -153,7 +153,7 @@ public class Role implements Serializable {
       return this;
     }
 
-    public RoleBuilder addUsers(User user) {
+    public RoleBuilder addUser(User user) {
       this.users.add(user);
       return this;
     }

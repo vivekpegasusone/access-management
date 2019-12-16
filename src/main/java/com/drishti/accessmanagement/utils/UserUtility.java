@@ -5,9 +5,23 @@ import com.drishti.accessmanagement.dto.user.UserView;
 import com.drishti.accessmanagement.entity.role.Role;
 import com.drishti.accessmanagement.entity.user.User;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class UserUtility {
 
   private UserUtility() {
+  }
+
+  public static List<UserView> prepareUserViewsFromUsers(final List<User> users) {
+    List<UserView> userViews = new ArrayList<>(users.size());
+
+    users.forEach(u -> {
+      UserView userView = prepareUserViewFromUser(u);
+      userViews.add(userView);
+    });
+
+    return userViews;
   }
 
   public static UserView prepareUserViewFromUser(final User user) {

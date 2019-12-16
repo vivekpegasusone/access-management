@@ -15,6 +15,7 @@ import java.util.Optional;
 
 import static com.drishti.accessmanagement.utils.UserUtility.prepareUserFromUserView;
 import static com.drishti.accessmanagement.utils.UserUtility.prepareUserViewFromUser;
+import static com.drishti.accessmanagement.utils.UserUtility.prepareUserViewsFromUsers;
 
 @Service
 @Transactional(readOnly = true)
@@ -39,7 +40,7 @@ class UserServiceImpl implements UserService {
     Optional<User> userOptional = userRepository.findById(id);
 
     if (userOptional.isPresent()) {
-      return prepareUserView(userOptional.get());
+      return prepareUserViewFromUser(userOptional.get());
     } else {
       throw new RecordNotFoundException("No record exist for given user id " + id);
     }
@@ -50,7 +51,7 @@ class UserServiceImpl implements UserService {
     Optional<User> userOptional = userRepository.findByLoginId(loginId);
 
     if (userOptional.isPresent()) {
-      return prepareUserView(userOptional.get());
+      return prepareUserViewFromUser(userOptional.get());
     } else {
       throw new RecordNotFoundException("No record exist for given user loginId " + loginId);
     }
@@ -73,24 +74,9 @@ class UserServiceImpl implements UserService {
     userRepository.deleteById(id);
   }
 
-  private UserView prepareUserView(final User user) {
-    return prepareUserViewFromUser(user);
-  }
-
   private UserView saveOrUpdateUser(final UserView userView) {
     User user = prepareUserFromUserView(userView);
     User savedUser = userRepository.save(user);
     return prepareUserViewFromUser(savedUser);
-  }
-
-  private List<UserView> prepareUserViewsFromUsers(final List<User> users) {
-    List<UserView> userViews = new ArrayList<>(users.size());
-
-    users.forEach(u -> {
-      UserView userView = prepareUserViewFromUser(u);
-      userViews.add(userView);
-    });
-
-    return userViews;
   }
 }

@@ -5,6 +5,7 @@ import com.drishti.accessmanagement.dto.role.RoleView;
 import com.drishti.accessmanagement.dto.user.UserView;
 import com.drishti.accessmanagement.entity.role.Role;
 import com.drishti.accessmanagement.entity.user.User;
+import com.drishti.accessmanagement.exception.RecordNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +20,8 @@ import java.util.Optional;
 import static com.drishti.accessmanagement.utility.UserFixture.anyUser;
 import static com.drishti.accessmanagement.utils.UserUtility.prepareUserViewFromUser;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,7 +43,7 @@ class UserServiceTest {
   }
 
   @Test
-  void getUsers() {
+  public void getUsers() {
     when(userRepository.findByActiveTrue()).thenReturn(users);
 
     List<UserView> userViews = userService.getUsers();
@@ -55,7 +58,15 @@ class UserServiceTest {
   }
 
   @Test
-  void findUserById() {
+  public void getUsersWhenNoUserExists() {
+    when(userRepository.findByActiveTrue()).thenReturn(new ArrayList<>());
+
+    List<UserView> userViews = userService.getUsers();
+    assertThat(userViews).isEmpty();
+  }
+
+  @Test
+  public void findUserById() {
     User user = users.get(0);
     when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
 
@@ -65,7 +76,17 @@ class UserServiceTest {
   }
 
   @Test
-  void findUserByLoginId() {
+  public void findUserByInvalidId() {
+    when(userRepository.findById(1L)).thenReturn(Optional.empty());
+    RecordNotFoundException exception = assertThrows(RecordNotFoundException.class, () ->
+      userService.findUserById(1L)
+    );
+
+    assertEquals("No record exist for given user id 1", exception.getMessage());
+  }
+
+  @Test
+  public void findUserByLoginId() {
     User user = users.get(0);
     when(userRepository.findByLoginId(user.getLoginId())).thenReturn(Optional.of(user));
 
@@ -75,7 +96,17 @@ class UserServiceTest {
   }
 
   @Test
-  void createUser() {
+  public void findUserByInvalidLoginId() {
+    when(userRepository.findByLoginId("test")).thenReturn(Optional.empty());
+    RecordNotFoundException exception = assertThrows(RecordNotFoundException.class, () ->
+      userService.findUserByLoginId("test")
+    );
+
+    assertEquals("No record exist for given user loginId test", exception.getMessage());
+  }
+
+  @Test
+  public void createUser() {
     User user = users.get(0);
     when(userRepository.save(user)).thenReturn(user);
 
@@ -85,7 +116,7 @@ class UserServiceTest {
   }
 
   @Test
-  void updateUser() {
+  public void updateUser() {
     String newName = "anyName";
     User user = users.get(0);
     user.setFirstName(newName);
@@ -98,7 +129,7 @@ class UserServiceTest {
   }
 
   @Test
-  void deleteUserById() {
+  public void deleteUserById() {
     User user = users.get(0);
     userService.deleteUserById(user.getId());
     verify(userRepository, times(1)).deleteById(user.getId());
@@ -125,8 +156,6 @@ class UserServiceTest {
       Role r = u.getRoles().get(i);
       compareRoleState(rv, r);
     }
-
-
   }
 
   private void compareRoleState(RoleView rv, Role r) {
