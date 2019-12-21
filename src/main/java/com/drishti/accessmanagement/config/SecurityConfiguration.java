@@ -18,6 +18,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http.authorizeRequests()
+        .antMatchers("/resources/**").permitAll()
         .anyRequest()
         .authenticated()
         .and()
@@ -27,6 +28,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         .usernameParameter("userId")
         .passwordParameter("password")
         .successHandler(successHandler)
+        .permitAll()
+        .and()
+        .logout()
         .permitAll();
   }
 
