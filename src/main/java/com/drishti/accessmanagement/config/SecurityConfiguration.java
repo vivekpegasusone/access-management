@@ -1,6 +1,6 @@
 package com.drishti.accessmanagement.config;
 
-import com.drishti.accessmanagement.handler.security.authentication.SuccessHandler;
+import com.drishti.accessmanagement.handler.security.authentication.LoginSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -13,7 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
   @Autowired
-  private SuccessHandler successHandler;
+  private LoginSuccessHandler loginSuccessHandler;
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
@@ -27,7 +27,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         .loginProcessingUrl("/home")
         .usernameParameter("userId")
         .passwordParameter("password")
-        .successHandler(successHandler)
+        .successHandler(loginSuccessHandler)
+        .failureUrl("/loginFailure")
         .permitAll()
         .and()
         .logout()

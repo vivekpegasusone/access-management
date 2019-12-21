@@ -15,7 +15,7 @@
         <div class="container">
     	<form class="form-signin" action="${pageContext.request.contextPath}/home" method="post">
     	    <h2 class="form-signin-heading">Please sign in</h2>
-    	    <p>
+            <p>
               <label for="username" class="sr-only">Username</label>
               <input type="text" id="username" name="userId" class="form-control" placeholder="Username" required autofocus>
             </p>
@@ -23,7 +23,10 @@
               <label for="password" class="sr-only">Password</label>
               <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
             </p>
-	     	<button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+	     	<c:if test="${not empty requestScope.errorMessage}">
+            <div class="alert alert-error">${requestScope.errorMessage}</div>
+            </c:if>
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
 	     	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 	    </form>
 	    </div>
