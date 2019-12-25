@@ -1,5 +1,6 @@
 package com.drishti.accessmanagement.controller;
 
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.stereotype.Controller;
@@ -16,7 +17,7 @@ public class LoginController {
 
   private static final String VIEW_NAME = "login";
 
-  @GetMapping(value = {"/", "/login"})
+  @GetMapping(value = { "/", "/login" })
   public String loginPage() {
     return VIEW_NAME;
   }
@@ -26,12 +27,22 @@ public class LoginController {
     HttpSession session = request.getSession(false);
     String errorMessage = null;
     if (nonNull(session)) {
-      AuthenticationException ex = (AuthenticationException) session.getAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
+      AuthenticationException ex = (AuthenticationException) session
+          .getAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
       if (nonNull(ex)) {
-        errorMessage = ex.getMessage();
+        errorMessage = handleException(ex);
       }
     }
     model.addAttribute("errorMessage", errorMessage);
     return VIEW_NAME;
+  }
+
+  private String handleException(Exception exception) {
+
+    if (exception instanceof BadCredentialsException) {
+      return "Invalid username or password. Please try again.";
+    } else {
+      return exception.getMessage();
+    }
   }
 }
