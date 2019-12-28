@@ -25,15 +25,21 @@ public class LoginController {
   @GetMapping(value = "/loginFailure")
   public String loginFailure(HttpServletRequest request, Model model) {
     HttpSession session = request.getSession(false);
-    String errorMessage = null;
+    String infoMessage = null;
     if (nonNull(session)) {
       AuthenticationException ex = (AuthenticationException) session
           .getAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
       if (nonNull(ex)) {
-        errorMessage = handleException(ex);
+        infoMessage = handleException(ex);
       }
     }
-    model.addAttribute("errorMessage", errorMessage);
+    model.addAttribute("infoMessage", infoMessage);
+    return VIEW_NAME;
+  }
+  
+  @GetMapping(value = { "/logoutSuccess" })
+  public String logoutPage(Model model) {
+    model.addAttribute("successMessage", "Successfully logged out.");
     return VIEW_NAME;
   }
 

@@ -23,11 +23,14 @@
               <label for="password" class="sr-only">Password</label>
               <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
             </p>
-	     	<c:if test="${not empty requestScope.errorMessage}">
-            <div class="alert alert-error">${requestScope.errorMessage}</div>
-            </c:if>
-            <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+	     	<button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
 	     	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+	     	<c:if test="${not empty requestScope.infoMessage}">
+            <div class="alert alert-info" role="alert">${requestScope.infoMessage}</div>
+            </c:if>
+            <c:if test="${not empty requestScope.successMessage}">
+            <div class="alert alert-info" role="alert">${requestScope.successMessage}</div>
+            </c:if>
 	    </form>
 	    </div>
     </body>

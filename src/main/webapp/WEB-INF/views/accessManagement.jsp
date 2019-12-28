@@ -1,152 +1,73 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>${title}</title>
-		<link rel="stylesheet" href="" type="text/css" />
-		<style type="text/css">
-		*{
-			margin: 0px;
-			padding: 0px;
-		}
-		
-		header{
-			height: 100px;
-			background-color: darkorange;
-		}
-		
-		a {
-		  text-decoration: none;
-		}
-
-		nav {
-			font-family: monospace;		
-			width: 100%;
-			float: left;
-		}
-
-		ul {
-			background: darkorange;
-			list-style: none;
-			margin: 0px;
-			padding-left: 0px;
-		}
-
-		li {
-			color: #fff;
-			background: darkorange;
-			display: block;
-			float: left;
-			padding: 1rem;
-			position: relative;
-			text-decoration: none;
-			transition-duration: 0.5s;
-		}
-		  
-		li a {
-			color: #fff;
-		}
-
-		li:hover {
-			background: red;
-			cursor: pointer;
-		}
-
-		ul li ul {
-			background: orange;
-			visibility: hidden;
-			opacity: 0;
-			min-width: 8rem;
-			position: absolute;
-			transition: all 0.5s ease;
-			margin-top: 1rem;
-			display: none;
-		}
-
-		ul li:hover > ul, ul li ul:hover {
-			visibility: visible;
-			opacity: 1;
-			display: block;
-		}
-
-		ul li ul li {
-			clear: both;
-			width: 100%;
-		}
-		
-		.logout{
-			background: darkorange;
-			color: white;
-			display: block;
-			float: right;
-			padding: 1rem;			
-			text-decoration: none;
-			transition-duration: 0.5s;
-		}
-		
-		.content{
-			height: 100%;
-		}
-		
-		.center {
-			color: white;
-			margin: auto;
-			text-align: center;
-			width: 50%;
-			padding: 10px;
-		}
-
-		footer{
-			background-color: darkorange;
-            width: 100%;
-            bottom: 0;
-            position: fixed;
-		}
-		</style>
-    </head>
-    <body>
-	    <header>
-			<h2 class="center">Access Management System</h2>
-			<nav>
-				<ul>
-					<li><a href="#">User</a>
-						<ul class="dropdown">
-							<li><a href="#">Create User</a></li>
-							<li><a href="#">List Users</a></li>
-						</ul>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet">
+    <script src="${pageContext.request.contextPath}/js/jquery-3.4.1.slim.min.js"></script>
+    <script src="${pageContext.request.contextPath}/js/popper.min.js"></script>
+    <script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
+	<title>Access Management System</title>	
+  </head>
+  <body>
+  	<div class="container-fluid border">
+  		<div class="bg-primary">
+  			<div class="text-center text-white"><h2>Access Management System</h2></div>
+			<nav class="navbar navbar-expand-sm">
+				<ul class="navbar-nav">
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle text-white" href="#" id="navbardrop" data-toggle="dropdown">User</a>
+						<div class="dropdown-menu">
+							<a class="dropdown-item" href="#">Create User</a> 
+							<a class="dropdown-item" href="#">List Users</a>
+						</div>
 					</li>
-					<li><a href="#">Role</a>
-						<ul class="dropdown">
-							<li><a href="#">Create Role</a></li>
-							<li><a href="#">List Roles</a></li>
-						</ul>
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle text-white" href="#" id="navbardrop" data-toggle="dropdown">Role</a>
+						<div class="dropdown-menu">
+							<a class="dropdown-item" href="#">Create Role</a> 
+							<a class="dropdown-item" href="#">List Roles</a>
+						</div>
 					</li>
-					<li><a href="#">Action</a>
-						<ul class="dropdown">
-							<li><a href="#">Create Action</a></li>
-							<li><a href="#">List Actions</a></li>
-						</ul>
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle text-white" href="#" id="navbardrop" data-toggle="dropdown">Action</a>
+						<div class="dropdown-menu">
+							<a class="dropdown-item" href="#">Create Action</a> 
+							<a class="dropdown-item" href="#">List Actions</a>
+						</div>
 					</li>
-					<li><a href="#">Resource</a>
-						<ul class="dropdown">
-							<li><a href="#">Create Resource</a></li>
-							<li><a href="#">List Resources</a></li>
-						</ul>
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle text-white" href="#" id="navbardrop" data-toggle="dropdown">Resource</a>
+						<div class="dropdown-menu">
+							<a class="dropdown-item" href="#">Create Resource</a> 
+							<a class="dropdown-item" href="#">List Resources</a>
+						</div>
 					</li>
-					<li><a href="#">Permission</a>
-						<ul class="dropdown">
-							<li><a href="#">Create Permission</a></li>
-							<li><a href="#">List Permissions</a></li>
-						</ul>
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle text-white" href="#" id="navbardrop" data-toggle="dropdown">Permission</a>
+						<div class="dropdown-menu">
+							<a class="dropdown-item" href="#">Create Permission</a> 
+							<a class="dropdown-item" href="#">List Permissions</a>
+						</div>
 					</li>					
 				</ul>
-				<a class="logout" href="#">Logout</a>
-			</nav>					
-		</header>		
-		<div class="content"><c:import url="${contentPage}"/></div>
-		<footer>
-			<h2>This is footer.</h2>
-		</footer>
-    </body>
+				<ul class="navbar-nav ml-auto">
+					<li class="nav-item">
+				        <a class="nav-link text-white" href="javascript:document.logoutForm.submit()">Logout</a>
+				    </li>
+				</ul>
+			</nav>
+		</div>
+  		<div><c:import url="${contentPage}"/></div>
+  		<footer class="footer">
+	    	<div class="container-fluid bg-primary text-right text-white">
+	    		<p> Version: xxx</p>
+	    	</div>
+	    </footer>  		
+	</div>
+	<form name="logoutForm" action="<c:url value="/logout"/>" method="post">
+    	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+    </form>
+  </body>
 </html>
