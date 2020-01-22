@@ -25,12 +25,9 @@
             </p>
 	     	<button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
 	     	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-	     	<c:if test="${not empty requestScope.infoMessage}">
-            <div class="alert alert-info" role="alert">${requestScope.infoMessage}</div>
-            </c:if>
-            <c:if test="${not empty requestScope.successMessage}">
-            <div class="alert alert-info" role="alert">${requestScope.successMessage}</div>
-            </c:if>
+	     	<c:if test="${not empty requestScope.message}">
+            <div class="alert alert-info" role="alert">${requestScope.message}</div>
+            </c:if>            
 	    </form>
 	    </div>
     </body>

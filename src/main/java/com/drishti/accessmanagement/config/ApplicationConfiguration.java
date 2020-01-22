@@ -19,7 +19,7 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
   private ViewInterceptor viewInterceptor;
 
   @Bean
-  AuditorAware<String> auditorProvider() {
+  public AuditorAware<String> auditorProvider() {
     return new AuditorAwareImpl();
   }
 

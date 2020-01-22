@@ -41,6 +41,7 @@ public class UserUtility {
         .setFirstName(uv.getFirstName())
         .setLastName(uv.getLastName())
         .setEmailId(uv.getEmailId())
+        .setPassword(uv.getPassword())
         .setActive(uv.isActive()).build();
 
     uv.getRoleViews().forEach(r ->

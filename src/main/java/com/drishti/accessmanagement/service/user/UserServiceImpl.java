@@ -25,8 +25,30 @@ class UserServiceImpl implements UserService {
   private UserRepository userRepository;
 
   @Override
-  public List<UserView> getUsers() {
+  public List<UserView> findAll() {
+    List<User> userList = userRepository.findAll();
+
+    if (!userList.isEmpty()) {
+      return prepareUserViewsFromUsers(userList);
+    } else {
+      return new ArrayList<>();
+    }
+  }
+  
+  @Override
+  public List<UserView> findActiveUsers() {
     List<User> userList = userRepository.findByActiveTrue();
+
+    if (!userList.isEmpty()) {
+      return prepareUserViewsFromUsers(userList);
+    } else {
+      return new ArrayList<>();
+    }
+  }
+  
+  @Override
+  public List<UserView> findInActiveUsers() {
+    List<User> userList = userRepository.findByActiveFalse();
 
     if (!userList.isEmpty()) {
       return prepareUserViewsFromUsers(userList);

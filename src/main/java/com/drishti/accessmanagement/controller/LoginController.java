@@ -27,19 +27,18 @@ public class LoginController {
     HttpSession session = request.getSession(false);
     String infoMessage = null;
     if (nonNull(session)) {
-      AuthenticationException ex = (AuthenticationException) session
-          .getAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
+      AuthenticationException ex = (AuthenticationException) session.getAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
       if (nonNull(ex)) {
         infoMessage = handleException(ex);
       }
     }
-    model.addAttribute("infoMessage", infoMessage);
+    model.addAttribute("message", infoMessage);
     return VIEW_NAME;
   }
   
   @GetMapping(value = { "/logoutSuccess" })
   public String logoutPage(Model model) {
-    model.addAttribute("successMessage", "Successfully logged out.");
+    model.addAttribute("message", "Successfully logged out.");
     return VIEW_NAME;
   }
 

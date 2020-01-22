@@ -46,13 +46,13 @@ class UserServiceTest {
   public void getUsers() {
     when(userRepository.findByActiveTrue()).thenReturn(users);
 
-    List<UserView> userViews = userService.getUsers();
+    List<UserView> userViews = userService.findActiveUsers();
     assertThat(userViews).isNotEmpty();
     assertThat(userViews).hasSize(2);
     compareUsers(userViews, users);
 
     users.clear();
-    userViews = userService.getUsers();
+    userViews = userService.findActiveUsers();
     assertThat(userViews).isEmpty();
     assertThat(userViews).hasSize(0);
   }
@@ -61,7 +61,7 @@ class UserServiceTest {
   public void getUsersWhenNoUserExists() {
     when(userRepository.findByActiveTrue()).thenReturn(new ArrayList<>());
 
-    List<UserView> userViews = userService.getUsers();
+    List<UserView> userViews = userService.findActiveUsers();
     assertThat(userViews).isEmpty();
   }
 

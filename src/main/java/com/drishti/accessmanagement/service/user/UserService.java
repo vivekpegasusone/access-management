@@ -6,8 +6,12 @@ import com.drishti.accessmanagement.exception.RecordNotFoundException;
 import java.util.List;
 
 public interface UserService {
+  
+  List<UserView> findAll();
 
-  List<UserView> getUsers();
+  List<UserView> findActiveUsers();
+  
+  List<UserView> findInActiveUsers();  
 
   UserView findUserById(Long id) throws RecordNotFoundException;
 
