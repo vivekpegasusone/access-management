@@ -17,6 +17,7 @@
 
 	<properties>
 		<java.version>1.8</java.version>
+		<jackson.mapper.version>1.9.13</jackson.mapper.version>
 	</properties>
 
 	<dependencies>
@@ -42,6 +43,12 @@
 			<artifactId>spring-boot-devtools</artifactId>
 			<scope>runtime</scope>
 			<optional>true</optional>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>		
+			<version>${jackson.mapper.version}</version>	
 		</dependency>
 
 		<dependency>

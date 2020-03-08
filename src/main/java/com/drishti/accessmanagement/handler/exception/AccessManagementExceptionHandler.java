@@ -1,5 +1,8 @@
 package com.drishti.accessmanagement.handler.exception;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.core.annotation.AnnotationUtils;
@@ -22,8 +25,11 @@ public class AccessManagementExceptionHandler {
 
     // Otherwise setup and send the user to a default error-view.
     ModelAndView mav = new ModelAndView();
-    mav.addObject("exception", e);
-    mav.addObject("url", req.getRequestURL());
+    StringWriter sw = new StringWriter();
+    PrintWriter pw = new PrintWriter(sw);
+    e.printStackTrace(pw);
+    mav.addObject("exception", sw.toString());
+    mav.addObject("url", req.getRequestURL()); 
     mav.setViewName(DEFAULT_ERROR_VIEW);
     return mav;
   }

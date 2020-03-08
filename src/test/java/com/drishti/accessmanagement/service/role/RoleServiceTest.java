@@ -1,11 +1,17 @@
 package com.drishti.accessmanagement.service.role;
 
-import com.drishti.accessmanagement.dao.role.RoleRepository;
-import com.drishti.accessmanagement.dto.role.RoleView;
-import com.drishti.accessmanagement.dto.user.UserView;
-import com.drishti.accessmanagement.entity.role.Role;
-import com.drishti.accessmanagement.entity.user.User;
-import com.drishti.accessmanagement.exception.RecordNotFoundException;
+import static com.drishti.accessmanagement.utility.RoleFixture.anyRole;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,16 +19,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import static com.drishti.accessmanagement.utility.RoleFixture.anyRole;
-import static com.drishti.accessmanagement.utils.RoleUtility.prepareRoleViewFromRole;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
+import com.drishti.accessmanagement.dto.role.RoleDto;
+import com.drishti.accessmanagement.dto.user.UserDto;
+import com.drishti.accessmanagement.exception.RecordNotFoundException;
+import com.drishti.accessmanagement.repository.dao.role.RoleRepository;
+import com.drishti.accessmanagement.repository.entity.role.Role;
+import com.drishti.accessmanagement.repository.entity.user.User;
+import com.drishti.accessmanagement.service.transformer.Transformer;
+import com.drishti.accessmanagement.service.transformer.role.RoleTransformer;
 
 @ExtendWith(MockitoExtension.class)
 class RoleServiceTest {
@@ -34,6 +38,8 @@ class RoleServiceTest {
 
   @InjectMocks
   private RoleService roleService = new RoleServiceImpl();
+  
+  private Transformer<Role, RoleDto> roleTransformer = new RoleTransformer();
 
   @BeforeEach
   public void setup() {
@@ -46,13 +52,13 @@ class RoleServiceTest {
   public void getRoles() {
     when(roleRepository.findByActiveTrue()).thenReturn(roles);
 
-    List<RoleView> roleViews = roleService.getRoles();
+    List<RoleDto> roleViews = roleService.findActiveRoles();
     assertThat(roleViews).isNotEmpty();
     assertThat(roleViews).hasSize(2);
     compareRoles(roleViews, roles);
 
     roles.clear();
-    roleViews = roleService.getRoles();
+    roleViews = roleService.findActiveRoles();
     assertThat(roleViews).isEmpty();
     assertThat(roleViews).hasSize(0);
   }
@@ -61,7 +67,7 @@ class RoleServiceTest {
   public void getRolesWhenNoRoleExists() {
     when(roleRepository.findByActiveTrue()).thenReturn(new ArrayList<>());
 
-    List<RoleView> roleViews = roleService.getRoles();
+    List<RoleDto> roleViews = roleService.findActiveRoles();
     assertThat(roleViews).isEmpty();
   }
 
@@ -70,7 +76,7 @@ class RoleServiceTest {
     Role role = roles.get(0);
     when(roleRepository.findById(role.getId())).thenReturn(Optional.of(role));
 
-    RoleView roleView = roleService.findRoleById(role.getId());
+    RoleDto roleView = roleService.findRoleById(role.getId());
     assertThat(roleView).isNotNull();
     compareRole(roleView, role);
   }
@@ -90,7 +96,7 @@ class RoleServiceTest {
     Role role = roles.get(0);
     when(roleRepository.save(role)).thenReturn(role);
 
-    RoleView roleView = roleService.createRole(prepareRoleViewFromRole(role));
+    RoleDto roleView = roleService.createRole(roleTransformer.transform(role));
     assertThat(roleView).isNotNull();
     compareRole(roleView, role);
   }
@@ -102,7 +108,7 @@ class RoleServiceTest {
     role.setName(newName);
     when(roleRepository.save(role)).thenReturn(role);
 
-    RoleView roleView = roleService.updateRole(prepareRoleViewFromRole(role));
+    RoleDto roleView = roleService.updateRole(roleTransformer.transform(role));
     assertThat(roleView).isNotNull();
     assertThat(roleView.getName()).isEqualTo(newName);
     compareRole(roleView, role);
@@ -115,33 +121,33 @@ class RoleServiceTest {
     verify(roleRepository, times(1)).deleteById(role.getId());
   }
 
-  private void compareRoles(List<RoleView> roleViews, List<Role> roles) {
+  private void compareRoles(List<RoleDto> roleViews, List<Role> roles) {
     for (int i = 0; i < roleViews.size(); i++) {
-      RoleView rv = roleViews.get(i);
+      RoleDto rv = roleViews.get(i);
       Role r = roles.get(i);
       compareRole(rv, r);
     }
   }
 
-  private void compareRole(RoleView rv, Role r) {
-    assertThat(rv.getId()).isEqualTo(r.getId());
-    assertThat(rv.getName()).isEqualTo(r.getName());
-    assertThat(rv.getDescription()).isEqualTo(r.getDescription());
-    assertThat(rv.isActive()).isEqualTo(r.isActive());
+  private void compareRole(RoleDto rd, Role r) {
+    assertThat(rd.getId()).isEqualTo(r.getId());
+    assertThat(rd.getName()).isEqualTo(r.getName());
+    assertThat(rd.getDescription()).isEqualTo(r.getDescription());
+    assertThat(rd.isActive()).isEqualTo(r.isActive());
 
-    for (int i = 0; i < rv.getUserViews().size(); i++) {
-      UserView uv = rv.getUserViews().get(i);
+    for (int i = 0; i < rd.getUserDtos().size(); i++) {
+      UserDto uv = rd.getUserDtos().get(i);
       User u = r.getUsers().get(i);
       compareUserState(uv, u);
     }
   }
 
-  private void compareUserState(UserView uv, User u) {
-    assertThat(uv.getId()).isEqualTo(u.getId());
-    assertThat(uv.getFirstName()).isEqualTo(u.getFirstName());
-    assertThat(uv.getLastName()).isEqualTo(u.getLastName());
-    assertThat(uv.getLoginId()).isEqualTo(u.getLoginId());
-    assertThat(uv.getEmailId()).isEqualTo(u.getEmailId());
-    assertThat(uv.isActive()).isEqualTo(u.isActive());
+  private void compareUserState(UserDto ud, User u) {
+    assertThat(ud.getId()).isEqualTo(u.getId());
+    assertThat(ud.getFirstName()).isEqualTo(u.getFirstName());
+    assertThat(ud.getLastName()).isEqualTo(u.getLastName());
+    assertThat(ud.getLoginId()).isEqualTo(u.getLoginId());
+    assertThat(ud.getEmailId()).isEqualTo(u.getEmailId());
+    assertThat(ud.isActive()).isEqualTo(u.isActive());
   }
 }

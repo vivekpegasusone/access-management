@@ -1,8 +1,14 @@
 package com.drishti.accessmanagement.dao.role;
 
 import com.drishti.accessmanagement.config.ApplicationTestConfiguration;
-import com.drishti.accessmanagement.entity.role.Role;
+import com.drishti.accessmanagement.repository.dao.application.ApplicationRepository;
+import com.drishti.accessmanagement.repository.dao.role.RoleRepository;
+import com.drishti.accessmanagement.repository.entity.application.Application;
+import com.drishti.accessmanagement.repository.entity.role.Role;
+
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -20,8 +26,13 @@ public class RoleRepositoryTest {
   private static String name;
   private static String description;
 
+  private Application application;
+  
   @Autowired
   private RoleRepository roleRepository;
+  
+  @Autowired
+  private ApplicationRepository applicationRepository;
 
   @BeforeAll
   public static void beforeAllTests(){
@@ -29,9 +40,21 @@ public class RoleRepositoryTest {
     description = "TestDescription";
   }
 
+  @BeforeEach
+  public void beforeEachTest() {
+    application = new Application.ApplicationBuilder("TestApp").setActive(true).build();
+    applicationRepository.save(application);
+  }
+  
+  @AfterEach
+  public void afterEachTest() {
+    applicationRepository.delete(application);
+  }
+  
   @Test
   public void testFindByName(){
-    Role role = new Role.RoleBuilder(name).setDescription(description).setActive(true).build();
+    Role role = new Role.RoleBuilder(name).setDescription(description).setActive(true)
+        .setApplication(application).build();
 
     role = roleRepository.save(role);
 
@@ -45,16 +68,17 @@ public class RoleRepositoryTest {
       assertThat(description).isEqualTo(savedRole.getDescription());
       assertThat(savedRole.isActive()).isTrue();
 
-      assertThat(savedRole.getAudit().getCreatedOn()).isNotNull();
-      assertThat(savedRole.getAudit().getCreatedBy()).isNotNull();
-      assertThat(savedRole.getAudit().getUpdatedOn()).isNotNull();
-      assertThat(savedRole.getAudit().getUpdatedBy()).isNotNull();
+      assertThat(savedRole.getCreatedOn()).isNotNull();
+      assertThat(savedRole.getCreatedBy()).isNotNull();
+      assertThat(savedRole.getUpdatedOn()).isNotNull();
+      assertThat(savedRole.getUpdatedBy()).isNotNull();
     }
   }
 
   @Test
   public void testFindByActiveTrue(){
-    Role role = new Role.RoleBuilder(name).setDescription(description).setActive(true).build();
+    Role role = new Role.RoleBuilder(name).setDescription(description).setActive(true)
+        .setApplication(application).build();
 
     roleRepository.save(role);
     List<Role> roles = roleRepository.findByActiveTrue();
@@ -65,7 +89,8 @@ public class RoleRepositoryTest {
 
   @Test
   public void testFindByActiveFalse(){
-    Role role = new Role.RoleBuilder(name).setDescription(description).setActive(false).build();
+    Role role = new Role.RoleBuilder(name).setDescription(description).setActive(false)
+        .setApplication(application).build();
 
     roleRepository.save(role);
     List<Role> roles = roleRepository.findByActiveFalse();

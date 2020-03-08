@@ -1,7 +1,8 @@
 package com.drishti.accessmanagement.utility;
 
-import com.drishti.accessmanagement.entity.role.Role;
-import com.drishti.accessmanagement.entity.user.User;
+import com.drishti.accessmanagement.repository.entity.application.Application;
+import com.drishti.accessmanagement.repository.entity.role.Role;
+import com.drishti.accessmanagement.repository.entity.user.User;
 
 import java.util.Random;
 
@@ -16,6 +17,10 @@ public class RoleFixture {
         .setId(Long.valueOf(counter))
         .setDescription("Rest Description " + counter)
         .setActive(true)
+        .setApplication(new Application.ApplicationBuilder("app" + counter)
+        .setId(Long.valueOf(counter))
+        .setDescription("This is test application.")
+        .setActive(true).build())
         .addUser(new User.UserBuilder("user" + counter)
             .setId(Long.valueOf(counter))
             .setFirstName("User")

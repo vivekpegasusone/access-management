@@ -1,20 +1,25 @@
 package com.drishti.accessmanagement.service.role;
 
-import com.drishti.accessmanagement.dto.role.RoleView;
-import com.drishti.accessmanagement.exception.RecordNotFoundException;
-
 import java.util.List;
+
+import com.drishti.accessmanagement.dto.role.RoleDto;
+import com.drishti.accessmanagement.exception.RecordNotFoundException;
 
 public interface RoleService {
 
-  List<RoleView> getRoles();
+  List<RoleDto> findAll();
+  
+  List<RoleDto> findActiveRoles();
+  
+  List<RoleDto> findInActiveRoles();  
 
-  RoleView findRoleById(Long id) throws RecordNotFoundException;
+  RoleDto findRoleById(Long id) throws RecordNotFoundException;
 
-  RoleView createRole(RoleView roleView);
+  RoleDto createRole(RoleDto roleDto);
 
-  RoleView updateRole(RoleView roleView) throws RecordNotFoundException;
+  RoleDto updateRole(RoleDto roleDto) throws RecordNotFoundException;
 
   void deleteRoleById(Long id) throws RecordNotFoundException;
 
+  List<RoleDto> findRolesByApplicationId(Long applicationId);
 }
