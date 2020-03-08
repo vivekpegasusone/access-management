@@ -1,7 +1,7 @@
 package com.drishti.accessmanagement.config;
 
-import com.drishti.accessmanagement.entity.audit.AuditorAwareImpl;
 import com.drishti.accessmanagement.interceptor.view.ViewInterceptor;
+import com.drishti.accessmanagement.repository.entity.audit.AuditorAwareImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

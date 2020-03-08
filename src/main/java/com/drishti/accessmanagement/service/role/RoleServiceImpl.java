@@ -1,43 +1,68 @@
 package com.drishti.accessmanagement.service.role;
 
-import com.drishti.accessmanagement.dao.role.RoleRepository;
-import com.drishti.accessmanagement.dto.role.RoleView;
-import com.drishti.accessmanagement.entity.role.Role;
-import com.drishti.accessmanagement.exception.RecordNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import static com.drishti.accessmanagement.utils.RoleUtility.*;
+import com.drishti.accessmanagement.dto.application.ApplicationDto;
+import com.drishti.accessmanagement.dto.role.RoleDto;
+import com.drishti.accessmanagement.exception.RecordNotFoundException;
+import com.drishti.accessmanagement.repository.dao.role.RoleRepository;
+import com.drishti.accessmanagement.repository.entity.application.Application;
+import com.drishti.accessmanagement.repository.entity.role.Role;
+import com.drishti.accessmanagement.service.transformer.Transformer;
+import com.drishti.accessmanagement.service.transformer.application.ApplicationTransformer;
+import com.drishti.accessmanagement.service.transformer.role.RoleTransformer;
 
 @Service
 class RoleServiceImpl implements RoleService {
 
   @Autowired
   private RoleRepository roleRepository;
+  
+  private Transformer<Role, RoleDto> roleTransformer = new RoleTransformer();
+  
+  private Transformer<Application, ApplicationDto> applicationTransformer = new ApplicationTransformer();
 
   @Override
-  public List<RoleView> getRoles() {
+  public List<RoleDto> findAll() {
+    List<Role> roles = roleRepository.findAll();
+    return roleTransformer.transform(roles);
+  }
+  
+  @Override
+  public List<RoleDto> findActiveRoles() {
     List<Role> roleList = roleRepository.findByActiveTrue();
 
     if (!roleList.isEmpty()) {
-      return prepareRoleViewsFromRoles(roleList);
+      return roleTransformer.transform(roleList);
+    } else {
+      return new ArrayList<>();
+    }
+  }
+  
+  @Override
+  public List<RoleDto> findInActiveRoles() {
+    List<Role> roleList = roleRepository.findByActiveFalse();
+
+    if (!roleList.isEmpty()) {
+      return roleTransformer.transform(roleList);
     } else {
       return new ArrayList<>();
     }
   }
 
   @Override
-  public RoleView findRoleById(Long id) {
+  public RoleDto findRoleById(Long id) {
     Optional<Role> optionalRole = roleRepository.findById(id);
 
     if (optionalRole.isPresent()) {
-      return prepareRoleViewFromRole(optionalRole.get());
+      return roleTransformer.transform(optionalRole.get());
     } else {
       throw new RecordNotFoundException("No record exist for given role id " + id);
     }
@@ -45,24 +70,36 @@ class RoleServiceImpl implements RoleService {
 
   @Override
   @Transactional(propagation= Propagation.REQUIRED)
-  public RoleView createRole(RoleView roleView) {
-    return saveOrUpdateRole(roleView);
+  public RoleDto createRole(RoleDto roleDto) {
+    Role role = roleTransformer.transform(roleDto);
+    role = roleRepository.save(role);
+    return roleTransformer.transform(role);
   }
 
   @Override
   @Transactional(propagation= Propagation.REQUIRED)
-  public RoleView updateRole(RoleView roleView) {
-    return saveOrUpdateRole(roleView);
+  public RoleDto updateRole(RoleDto roleDto) {
+    Role role = roleRepository.findById(roleDto.getId()).get();
+    role.setName(roleDto.getName());
+    role.setDescription(roleDto.getDescription());
+    role.setApplication(applicationTransformer.transform(roleDto.getApplicationDto()));
+     
+    roleRepository.saveAndFlush(role);    
+    return roleTransformer.transform(role);
   }
 
   @Override
   public void deleteRoleById(Long id) {
-    roleRepository.deleteById(id);
+    Role role = roleRepository.findById(id).get();
+    role.setActive(false);
+    // set all users, roles, actions, resources false
+    roleRepository.save(role);    
   }
 
-  private RoleView saveOrUpdateRole(final RoleView roleView) {
-    Role role = prepareRoleFromRoleView(roleView);
-    Role savedRole = roleRepository.save(role);
-    return prepareRoleViewFromRole(savedRole);
+  @Override
+  public List<RoleDto> findRolesByApplicationId(Long applicationId) {
+    List<Role> roles = roleRepository.findByRolesByApplicationId(applicationId);
+    return roleTransformer.transform(roles);
   }
+    
 }

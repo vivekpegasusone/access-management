@@ -2,24 +2,24 @@ package com.drishti.accessmanagement.service.application;
 
 import java.util.List;
 
-import com.drishti.accessmanagement.dto.application.ApplicationView;
+import com.drishti.accessmanagement.dto.application.ApplicationDto;
 import com.drishti.accessmanagement.exception.RecordNotFoundException;
 
 public interface ApplicationService {
   
-  List<ApplicationView> findAll();
+  List<ApplicationDto> findAll();
 
-  List<ApplicationView> findActiveApplications();
+  List<ApplicationDto> findActiveApplications();
   
-  List<ApplicationView> findInActiveApplications();  
+  List<ApplicationDto> findInActiveApplications();  
 
-  ApplicationView findApplicationById(Long id) throws RecordNotFoundException;
+  ApplicationDto findApplicationById(Long id) throws RecordNotFoundException;
 
-  ApplicationView findApplicationByname(String name) throws RecordNotFoundException;
+  ApplicationDto findApplicationByname(String name) throws RecordNotFoundException;
 
-  ApplicationView createApplication(ApplicationView applicationView);
+  ApplicationDto createApplication(ApplicationDto applicationDto);
 
-  ApplicationView updateApplication(ApplicationView applicationView) throws RecordNotFoundException;
+  ApplicationDto updateApplication(ApplicationDto applicationDto) throws RecordNotFoundException;
 
   void deleteApplicationById(Long id) throws RecordNotFoundException;
 }

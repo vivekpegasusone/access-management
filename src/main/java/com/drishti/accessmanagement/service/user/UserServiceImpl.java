@@ -1,21 +1,20 @@
 package com.drishti.accessmanagement.service.user;
 
-import com.drishti.accessmanagement.dao.user.UserRepository;
-import com.drishti.accessmanagement.dto.user.UserView;
-import com.drishti.accessmanagement.entity.user.User;
-import com.drishti.accessmanagement.exception.RecordNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import static com.drishti.accessmanagement.utils.UserUtility.prepareUserFromUserView;
-import static com.drishti.accessmanagement.utils.UserUtility.prepareUserViewFromUser;
-import static com.drishti.accessmanagement.utils.UserUtility.prepareUserViewsFromUsers;
+import com.drishti.accessmanagement.dto.user.UserDto;
+import com.drishti.accessmanagement.exception.RecordNotFoundException;
+import com.drishti.accessmanagement.repository.dao.user.UserRepository;
+import com.drishti.accessmanagement.repository.entity.user.User;
+import com.drishti.accessmanagement.service.transformer.Transformer;
+import com.drishti.accessmanagement.service.transformer.user.UserTransformer;
 
 @Service
 @Transactional(readOnly = true)
@@ -23,57 +22,59 @@ class UserServiceImpl implements UserService {
 
   @Autowired
   private UserRepository userRepository;
+  
+  private Transformer<User, UserDto> userTransformer = new UserTransformer();
 
   @Override
-  public List<UserView> findAll() {
+  public List<UserDto> findAll() {
     List<User> userList = userRepository.findAll();
 
     if (!userList.isEmpty()) {
-      return prepareUserViewsFromUsers(userList);
+      return userTransformer.transform(userList);
     } else {
       return new ArrayList<>();
     }
   }
   
   @Override
-  public List<UserView> findActiveUsers() {
+  public List<UserDto> findActiveUsers() {
     List<User> userList = userRepository.findByActiveTrue();
 
     if (!userList.isEmpty()) {
-      return prepareUserViewsFromUsers(userList);
+      return userTransformer.transform(userList);
     } else {
       return new ArrayList<>();
     }
   }
   
   @Override
-  public List<UserView> findInActiveUsers() {
+  public List<UserDto> findInActiveUsers() {
     List<User> userList = userRepository.findByActiveFalse();
 
     if (!userList.isEmpty()) {
-      return prepareUserViewsFromUsers(userList);
+      return userTransformer.transform(userList);
     } else {
       return new ArrayList<>();
     }
   }
 
   @Override
-  public UserView findUserById(final Long id) {
+  public UserDto findUserById(final Long id) {
     Optional<User> userOptional = userRepository.findById(id);
 
     if (userOptional.isPresent()) {
-      return prepareUserViewFromUser(userOptional.get());
+      return userTransformer.transform(userOptional.get());
     } else {
       throw new RecordNotFoundException("No record exist for given user id " + id);
     }
   }
 
   @Override
-  public UserView findUserByLoginId(final String loginId) {
+  public UserDto findUserByLoginId(final String loginId) {
     Optional<User> userOptional = userRepository.findByLoginId(loginId);
 
     if (userOptional.isPresent()) {
-      return prepareUserViewFromUser(userOptional.get());
+      return userTransformer.transform(userOptional.get());
     } else {
       throw new RecordNotFoundException("No record exist for given user loginId " + loginId);
     }
@@ -81,24 +82,27 @@ class UserServiceImpl implements UserService {
 
   @Override
   @Transactional(propagation = Propagation.REQUIRED)
-  public UserView createUser(final UserView userView) {
-    return saveOrUpdateUser(userView);
+  public UserDto createUser(final UserDto userDto) {
+    return saveOrUpdateUser(userDto);
   }
 
   @Override
   @Transactional(propagation = Propagation.REQUIRED)
-  public UserView updateUser(final UserView userView) {
-    return saveOrUpdateUser(userView);
+  public UserDto updateUser(final UserDto userDto) {
+    return saveOrUpdateUser(userDto);
   }
 
   @Override
+  @Transactional(propagation = Propagation.REQUIRED)
   public void deleteUserById(Long id) {
-    userRepository.deleteById(id);
+    User user = userRepository.findById(id).get();
+    user.setActive(false);
+    userRepository.save(user); 
   }
 
-  private UserView saveOrUpdateUser(final UserView userView) {
-    User user = prepareUserFromUserView(userView);
-    User savedUser = userRepository.save(user);
-    return prepareUserViewFromUser(savedUser);
+  private UserDto saveOrUpdateUser(final UserDto userDto) {
+    User user = userTransformer.transform(userDto);
+    user = userRepository.save(user);
+    return userTransformer.transform(user);
   }
 }

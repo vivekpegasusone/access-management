@@ -1,11 +1,14 @@
 package com.drishti.accessmanagement.service.user;
 
-import com.drishti.accessmanagement.dao.user.UserRepository;
-import com.drishti.accessmanagement.dto.role.RoleView;
-import com.drishti.accessmanagement.dto.user.UserView;
-import com.drishti.accessmanagement.entity.role.Role;
-import com.drishti.accessmanagement.entity.user.User;
+import com.drishti.accessmanagement.dto.role.RoleDto;
+import com.drishti.accessmanagement.dto.user.UserDto;
 import com.drishti.accessmanagement.exception.RecordNotFoundException;
+import com.drishti.accessmanagement.repository.dao.user.UserRepository;
+import com.drishti.accessmanagement.repository.entity.role.Role;
+import com.drishti.accessmanagement.repository.entity.user.User;
+import com.drishti.accessmanagement.service.transformer.Transformer;
+import com.drishti.accessmanagement.service.transformer.user.UserTransformer;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +21,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.drishti.accessmanagement.utility.UserFixture.anyUser;
-import static com.drishti.accessmanagement.utils.UserUtility.prepareUserViewFromUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -35,6 +37,8 @@ class UserServiceTest {
   @InjectMocks
   private UserService userService = new UserServiceImpl();
 
+  private Transformer<User, UserDto> userTransformer = new UserTransformer();
+  
   @BeforeEach
   public void setup() {
     users = new ArrayList<>();
@@ -46,7 +50,7 @@ class UserServiceTest {
   public void getUsers() {
     when(userRepository.findByActiveTrue()).thenReturn(users);
 
-    List<UserView> userViews = userService.findActiveUsers();
+    List<UserDto> userViews = userService.findActiveUsers();
     assertThat(userViews).isNotEmpty();
     assertThat(userViews).hasSize(2);
     compareUsers(userViews, users);
@@ -61,7 +65,7 @@ class UserServiceTest {
   public void getUsersWhenNoUserExists() {
     when(userRepository.findByActiveTrue()).thenReturn(new ArrayList<>());
 
-    List<UserView> userViews = userService.findActiveUsers();
+    List<UserDto> userViews = userService.findActiveUsers();
     assertThat(userViews).isEmpty();
   }
 
@@ -70,7 +74,7 @@ class UserServiceTest {
     User user = users.get(0);
     when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
 
-    UserView userView = userService.findUserById(user.getId());
+    UserDto userView = userService.findUserById(user.getId());
     assertThat(userView).isNotNull();
     compareUser(userView, user);
   }
@@ -90,7 +94,7 @@ class UserServiceTest {
     User user = users.get(0);
     when(userRepository.findByLoginId(user.getLoginId())).thenReturn(Optional.of(user));
 
-    UserView userView = userService.findUserByLoginId(user.getLoginId());
+    UserDto userView = userService.findUserByLoginId(user.getLoginId());
     assertThat(userView).isNotNull();
     compareUser(userView, user);
   }
@@ -110,7 +114,7 @@ class UserServiceTest {
     User user = users.get(0);
     when(userRepository.save(user)).thenReturn(user);
 
-    UserView userView = userService.createUser(prepareUserViewFromUser(user));
+    UserDto userView = userService.createUser(userTransformer.transform(user));
     assertThat(userView).isNotNull();
     compareUser(userView, user);
   }
@@ -122,7 +126,7 @@ class UserServiceTest {
     user.setFirstName(newName);
     when(userRepository.save(user)).thenReturn(user);
 
-    UserView userView = userService.updateUser(prepareUserViewFromUser(user));
+    UserDto userView = userService.updateUser(userTransformer.transform(user));
     assertThat(userView).isNotNull();
     assertThat(userView.getFirstName()).isEqualTo(newName);
     compareUser(userView, user);
@@ -135,15 +139,15 @@ class UserServiceTest {
     verify(userRepository, times(1)).deleteById(user.getId());
   }
 
-  private void compareUsers(List<UserView> userViews, List<User> users) {
+  private void compareUsers(List<UserDto> userViews, List<User> users) {
     for (int i = 0; i < userViews.size(); i++) {
-      UserView uv = userViews.get(i);
+      UserDto uv = userViews.get(i);
       User u = users.get(i);
       compareUser(uv, u);
     }
   }
 
-  private void compareUser(UserView uv, User u) {
+  private void compareUser(UserDto uv, User u) {
     assertThat(uv.getId()).isEqualTo(u.getId());
     assertThat(uv.getLoginId()).isEqualTo(u.getLoginId());
     assertThat(uv.getFirstName()).isEqualTo(u.getFirstName());
@@ -151,14 +155,13 @@ class UserServiceTest {
     assertThat(uv.getEmailId()).isEqualTo(u.getEmailId());
     assertThat(uv.isActive()).isEqualTo(u.isActive());
 
-    for (int i = 0; i < uv.getRoleViews().size(); i++) {
-      RoleView rv = uv.getRoleViews().get(i);
-      Role r = u.getRoles().get(i);
-      compareRoleState(rv, r);
-    }
+    RoleDto rv = uv.getRoleDto();
+    Role r = u.getRole();
+    compareRoleState(rv, r);
+    
   }
 
-  private void compareRoleState(RoleView rv, Role r) {
+  private void compareRoleState(RoleDto rv, Role r) {
     assertThat(rv.getId()).isEqualTo(r.getId());
     assertThat(rv.getName()).isEqualTo(r.getName());
     assertThat(rv.getDescription()).isEqualTo(r.getDescription());

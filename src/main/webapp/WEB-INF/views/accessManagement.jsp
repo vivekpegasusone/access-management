@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/css/access-management.css" rel="stylesheet">
-    <script src="${pageContext.request.contextPath}/js/jquery-3.4.1.slim.min.js"></script>
+    <script src="${pageContext.request.contextPath}/js/jquery-3.4.1.min.js"></script>
     <script src="${pageContext.request.contextPath}/js/popper.min.js"></script>
-    <script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>
+    <script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>    
 	<title>Access Management System</title>	
   </head>
   <body>
@@ -35,4 +35,5 @@
     	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
     </form>
   </body>
+  <script src="${pageContext.request.contextPath}/js/accessManagement.js"></script>
 </html>

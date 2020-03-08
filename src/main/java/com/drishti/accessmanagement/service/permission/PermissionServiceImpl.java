@@ -1,8 +1,9 @@
 package com.drishti.accessmanagement.service.permission;
 
-import com.drishti.accessmanagement.dao.permission.PermissionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.drishti.accessmanagement.repository.dao.permission.PermissionRepository;
 
 @Service
 class PermissionServiceImpl implements PermissionService {
