@@ -25,6 +25,8 @@ public class ResourceRepositoryTest {
 
   private static String name;
   
+  private static String description;
+  
   private Application application; 
   
   @Autowired
@@ -36,6 +38,7 @@ public class ResourceRepositoryTest {
   @BeforeAll
   public static void beforeAllTests(){
     name = "TestName";
+    description = "TestDescription";
   }
   
   @BeforeEach
@@ -51,7 +54,7 @@ public class ResourceRepositoryTest {
 
   @Test
   public void testFindByName() {
-    Resource resource = new Resource.ResourceBuilder(name).setActive(true).setApplication(application).build();
+    Resource resource = new Resource.ResourceBuilder(name).setDescription(description).setActive(true).setApplication(application).build();
     resource = resourceRepository.save(resource);
 
     Optional<Resource> optionalResource = resourceRepository.findByName(resource.getName());
@@ -61,6 +64,7 @@ public class ResourceRepositoryTest {
     if(optionalResource.isPresent()) {
       Resource savedResource = optionalResource.get();
       assertThat(name).isEqualTo(savedResource.getName());
+      assertThat(description).isEqualTo(savedResource.getDescription());
       assertThat(savedResource.isActive()).isTrue();
 
       assertThat(savedResource.getCreatedOn()).isNotNull();
@@ -72,7 +76,7 @@ public class ResourceRepositoryTest {
 
   @Test
   public void testFindByActiveTrue() {
-    Resource resource = new Resource.ResourceBuilder(name).setActive(true).setApplication(application).build();
+    Resource resource = new Resource.ResourceBuilder(name).setDescription(description).setActive(true).setApplication(application).build();
 
     resourceRepository.save(resource);
     List<Resource> resources = resourceRepository.findByActiveTrue();
@@ -83,7 +87,7 @@ public class ResourceRepositoryTest {
 
   @Test
   public void testFindByActiveFalse() {
-    Resource resource = new Resource.ResourceBuilder(name).setActive(false).setApplication(application).build();
+    Resource resource = new Resource.ResourceBuilder(name).setDescription(description).setActive(false).setApplication(application).build();
 
     resourceRepository.save(resource);
     List<Resource> resources = resourceRepository.findByActiveFalse();

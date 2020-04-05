@@ -20,6 +20,9 @@ public class Resource extends Auditable {
 
   @Column(name = "name", unique = true)
   private String name;
+  
+  @Column(name = "description")
+  private String description;
 
   @Column(name = "active")
   private boolean active;
@@ -34,6 +37,7 @@ public class Resource extends Auditable {
   private Resource(ResourceBuilder builder) {
     this.setId(builder.id);
     this.setName(builder.name);
+    this.setDescription(builder.description);
     this.setActive(builder.active);
     this.setApplication(builder.application);
   }
@@ -52,6 +56,14 @@ public class Resource extends Auditable {
 
   public void setName(String name) {
     this.name = name;
+  }
+  
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
   }
 
   public boolean isActive() {
@@ -92,6 +104,7 @@ public class Resource extends Auditable {
   public static class ResourceBuilder {
     private Long id;
     private String name;
+    private String description;
     private boolean active;
 
     private Application application;
@@ -102,6 +115,11 @@ public class Resource extends Auditable {
 
     public ResourceBuilder setId(Long id) {
       this.id = id;
+      return this;
+    }
+    
+    public ResourceBuilder setDescription(String description) {
+      this.description = description;
       return this;
     }
 

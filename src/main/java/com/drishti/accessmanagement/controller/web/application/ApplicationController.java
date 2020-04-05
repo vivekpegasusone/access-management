@@ -78,10 +78,10 @@ public class ApplicationController {
       ApplicationDto applicationDto = ApplicationUtil.toApplicationDto(applicationVO);
       
       if(Objects.isNull(applicationDto.getId())) {
-        applicationDto = applicationService.createApplication(applicationDto);
+        applicationService.createApplication(applicationDto);
         modelAndView.addObject("message", "Application record saved successfully.");
       } else {
-        applicationDto = applicationService.updateApplication(applicationDto);
+        applicationService.updateApplication(applicationDto);
         modelAndView.addObject("message", "Application record updated successfully.");
       }
 

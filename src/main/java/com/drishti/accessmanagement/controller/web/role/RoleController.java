@@ -63,10 +63,10 @@ public class RoleController {
   @GetMapping(value = "/edit")
   public ModelAndView showEditRole(@RequestParam("roleId") long roleId) {
     ModelAndView modelAndView = new ModelAndView(VIEW_CREATE_ROLE);
-    RoleDto applicationDto = roleService.findRoleById(roleId);
+    RoleDto roleDto = roleService.findRoleById(roleId);
 
     List<ApplicationDto> applicationDtoList = applicationService.findActiveApplications();
-    populateRoleView(modelAndView, applicationDto, applicationDtoList);
+    populateRoleView(modelAndView, roleDto, applicationDtoList);
 
     return modelAndView;
   }
@@ -74,23 +74,22 @@ public class RoleController {
   @PostMapping(value = "/save")
   public ModelAndView saveRole(@Valid RoleVO roleVO, BindingResult bindingResult) {
     ModelAndView modelAndView = new ModelAndView(VIEW_CREATE_ROLE);
-
+    List<ApplicationDto> applicationDtoList = applicationService.findActiveApplications();
+    populateRoleView(modelAndView, applicationDtoList);
+    
     if (bindingResult.hasErrors()) {
       modelAndView.addAllObjects(bindingResult.getModel());
     } else {
       RoleDto roleDto = RoleUtil.toRoleDto(roleVO);
 
       if (Objects.isNull(roleDto.getId())) {
-        roleDto = roleService.createRole(roleDto);
+        roleService.createRole(roleDto);
         modelAndView.addObject("message", "Role record saved successfully.");
       } else {
-        roleDto = roleService.updateRole(roleDto);
+        roleService.updateRole(roleDto);
         modelAndView.addObject("message", "Role record updated successfully.");
       }
-    }
-
-    List<ApplicationDto> applicationDtoList = applicationService.findActiveApplications();
-    populateRoleView(modelAndView, applicationDtoList);
+    }    
 
     return modelAndView;
   }

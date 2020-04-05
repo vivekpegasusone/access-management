@@ -84,7 +84,7 @@ class RoleServiceImpl implements RoleService {
     role.setDescription(roleDto.getDescription());
     role.setApplication(applicationTransformer.transform(roleDto.getApplicationDto()));
      
-    roleRepository.saveAndFlush(role);    
+    roleRepository.save(role);    
     return roleTransformer.transform(role);
   }
 
@@ -98,7 +98,7 @@ class RoleServiceImpl implements RoleService {
 
   @Override
   public List<RoleDto> findRolesByApplicationId(Long applicationId) {
-    List<Role> roles = roleRepository.findByRolesByApplicationId(applicationId);
+    List<Role> roles = roleRepository.findRolesByApplicationId(applicationId);
     return roleTransformer.transform(roles);
   }
     

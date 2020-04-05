@@ -21,6 +21,9 @@ public class Permission extends Auditable {
 
   @Column(name = "name", unique = true)
   private String name;
+  
+  @Column(name = "description")
+  private String description;
 
   @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "actionId", nullable = false)

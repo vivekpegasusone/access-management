@@ -60,6 +60,7 @@ CREATE TABLE `resources` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `applicationId` bigint(20) NOT NULL,
   `name` varchar(50) NOT NULL,
+  `description` varchar(100) DEFAULT NULL,
   `active` bit(1) DEFAULT NULL,
   `createdBy` varchar(25) NOT NULL,
   `createdOn` timestamp NOT NULL,
@@ -92,6 +93,7 @@ CREATE TABLE `actions` (
 CREATE TABLE `permissions` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
+  `description` varchar(100) DEFAULT NULL,
   `actionId` bigint(20) NOT NULL,
   `resourceId` bigint(20) NOT NULL,
   `createdBy` varchar(25) NOT NULL,

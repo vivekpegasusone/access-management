@@ -44,10 +44,6 @@ public class RoleTransformer implements Transformer<Role, RoleDto> {
       roleDtos = Collections.emptyList();
     } else {
       roleDtos = roles.stream().map(r -> transform(r)).collect(Collectors.toList());
-//      roleDtos = new ArrayList<>(roles.size());
-//      roles.forEach(r -> {
-//        roleDtos.add(transform(r));
-//      });
     }
     
     return roleDtos;
@@ -63,10 +59,6 @@ public class RoleTransformer implements Transformer<Role, RoleDto> {
     List<User> users = roleDto.getUserDtos().parallelStream().map(u -> new User.UserBuilder(u.getLoginId()).setId(u.getId())
         .setFirstName(u.getFirstName()).setLastName(u.getLastName()).setEmailId(u.getEmailId()).setActive(u.isActive())
         .build()).collect(Collectors.toList());
-//    List<User> users = new ArrayList<>(roleDto.getUserDtos().size());
-//    roleDto.getUserDtos().forEach(u -> users.add(new User.UserBuilder(u.getLoginId()).setId(u.getId())
-//        .setFirstName(u.getFirstName()).setLastName(u.getLastName()).setEmailId(u.getEmailId())
-//        .setActive(u.isActive()).build()));
         
     role.setApplication(app);
     role.setUsers(users);
