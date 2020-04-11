@@ -12,6 +12,10 @@ public class ActionDto extends AuditableDto {
   
   private ApplicationDto applicationDto;
   
+  public ActionDto(Long id) {
+    super.setId(id);
+  }
+  
   public ActionDto(String name) {
     this.name = name;
   }

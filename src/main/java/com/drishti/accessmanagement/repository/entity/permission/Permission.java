@@ -24,6 +24,9 @@ public class Permission extends Auditable {
   
   @Column(name = "description")
   private String description;
+  
+  @Column(name = "active")
+  private boolean active;
 
   @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "actionId", nullable = false)
@@ -39,6 +42,8 @@ public class Permission extends Auditable {
   private Permission(PermissionBuilder builder) {
     this.setId(builder.id);
     this.setName(builder.name);
+    this.setDescription(builder.description);
+    this.setActive(builder.active);
     this.setAction(builder.action);
     this.setResource(builder.resource);
   }
@@ -57,6 +62,22 @@ public class Permission extends Auditable {
 
   public void setName(String name) {
     this.name = name;
+  }
+  
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public boolean isActive() {
+    return active;
+  }
+
+  public void setActive(boolean active) {
+    this.active = active;
   }
 
   public Action getAction() {
@@ -99,6 +120,8 @@ public class Permission extends Auditable {
   public static class PermissionBuilder {
     private Long id;
     private String name;
+    private String description;
+    private boolean active;
     private Action action;
     private Resource resource;
 
@@ -123,6 +146,16 @@ public class Permission extends Auditable {
 
     public PermissionBuilder setResource(Resource resource) {
       this.resource = resource;
+      return this;
+    }
+
+    public PermissionBuilder setDescription(String description) {
+      this.description = description;
+      return this;
+    }
+
+    public PermissionBuilder setActive(boolean active) {
+      this.active = active;
       return this;
     }
 

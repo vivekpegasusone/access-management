@@ -27,6 +27,13 @@ public class ActionVO {
   private String updatedBy;
   private LocalDateTime createdOn;
   private LocalDateTime updatedOn;
+
+  public ActionVO() {   
+  }
+  
+  public ActionVO(Long id) {
+    this.id = id;
+  }
   
   public Long getId() {
     return id;

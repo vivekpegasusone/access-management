@@ -35,5 +35,5 @@
     	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
     </form>
   </body>
-  <script src="${pageContext.request.contextPath}/js/accessManagement.js"></script>
+  <script src="${pageContext.request.contextPath}/js/loadRoles.js"></script>
 </html>

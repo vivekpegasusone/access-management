@@ -22,6 +22,10 @@ public interface ControllerConstants {
   String VIEW_CREATE_RESOURCE = "resource/createResource";
   String VIEW_INACTIVE_RESOURCE = "resource/listInActiveResource";
   
+  String VIEW_LIST_PERMISSION = "permission/listPermission";
+  String VIEW_CREATE_PERMISSION = "permission/createPermission";
+  String VIEW_INACTIVE_PERMISSION = "permission/listInActivePermission";
+  
   String HYPHEN = "-";
   
   String EMPTY_STRING = "";

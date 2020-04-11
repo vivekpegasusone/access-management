@@ -12,6 +12,10 @@ public class ResourceDto extends AuditableDto {
   
   private ApplicationDto applicationDto;
   
+  public ResourceDto(Long id) {
+    super.setId(id);
+  }
+  
   public ResourceDto(String name) {
     this.name = name;
   }
