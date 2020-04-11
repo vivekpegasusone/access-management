@@ -20,4 +20,5 @@ public interface RoleRepository extends JpaRepository<Role, Long> {
   
   @Query("from Role r inner join fetch r.application a where a.id = :applicationId and r.active = true")
   List<Role> findRolesByApplicationId(Long applicationId); 
+
 }
