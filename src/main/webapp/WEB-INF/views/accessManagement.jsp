@@ -36,4 +36,6 @@
     </form>
   </body>
   <script src="${pageContext.request.contextPath}/js/loadRoles.js"></script>
+  <script src="${pageContext.request.contextPath}/js/loadActionsAndResources.js"></script>
+  <script src="${pageContext.request.contextPath}/js/loadPermissions.js"></script>
 </html>

@@ -2,6 +2,7 @@ package com.drishti.accessmanagement.service.transformer.permission;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.util.CollectionUtils;
@@ -24,30 +25,35 @@ public class PermissionTransformer  implements Transformer<Permission, Permissio
   
   @Override
   public PermissionDto transform(Permission permission) {
-    ActionDto actionDto = actionTransformer.transform(permission.getAction());
-    ResourceDto resourceDto = resourceTransformer.transform(permission.getResource());
+    PermissionDto permissionDto = null;
+    if (Objects.nonNull(permission)) {
+      permissionDto = new PermissionDto(permission.getId(), permission.getName(), permission.getDescription(),
+          permission.isActive());
+      permissionDto.setCreatedBy(permission.getCreatedBy());
+      permissionDto.setCreatedOn(permission.getCreatedOn());
+      permissionDto.setUpdatedBy(permission.getUpdatedBy());
+      permissionDto.setUpdatedOn(permission.getUpdatedOn());
 
-    PermissionDto permissionDto = new PermissionDto(permission.getId(), permission.getName(), permission.getDescription(), permission.isActive());
-    permissionDto.setCreatedBy(permission.getCreatedBy());
-    permissionDto.setCreatedOn(permission.getCreatedOn());
-    permissionDto.setUpdatedBy(permission.getUpdatedBy());
-    permissionDto.setUpdatedOn(permission.getUpdatedOn());
-
-    permissionDto.setActionDto(actionDto);
-    permissionDto.setResourceDto(resourceDto);
-
+      ActionDto actionDto = actionTransformer.transform(permission.getAction());
+      ResourceDto resourceDto = resourceTransformer.transform(permission.getResource());
+      
+      permissionDto.setActionDto(actionDto);
+      permissionDto.setResourceDto(resourceDto);
+    }
     return permissionDto;
   }
 
   @Override
   public Permission transform(PermissionDto permissionDto) {
-    Action action = actionTransformer.transform(permissionDto.getActionDto());
-    Resource resource = resourceTransformer.transform(permissionDto.getResourceDto());
-        
-    Permission permission = new Permission.PermissionBuilder(permissionDto.getName()).setId(permissionDto.getId())
-        .setDescription(permissionDto.getDescription()).setActive(permissionDto.isActive())
-        .setAction(action).setResource(resource).build();
+    Permission permission = null;
+    if (Objects.nonNull(permissionDto)) {
+      Action action = actionTransformer.transform(permissionDto.getActionDto());
+      Resource resource = resourceTransformer.transform(permissionDto.getResourceDto());
 
+      permission = new Permission.PermissionBuilder(permissionDto.getName()).setId(permissionDto.getId())
+          .setDescription(permissionDto.getDescription()).setActive(permissionDto.isActive()).setAction(action)
+          .setResource(resource).build();
+    }
     return permission;
   }
 

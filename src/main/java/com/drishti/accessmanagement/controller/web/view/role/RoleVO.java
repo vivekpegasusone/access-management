@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import com.drishti.accessmanagement.controller.web.view.application.ApplicationVO;
+import com.drishti.accessmanagement.controller.web.view.permission.PermissionVO;
 
 public class RoleVO {
 
@@ -15,6 +16,8 @@ public class RoleVO {
   @NotNull(message = "Role must have an Application.")
   private ApplicationVO applicationVO;
 
+  private PermissionVO permissionVO;
+  
   @NotBlank(message = "Role name can not be empty.")
   @Size(max = 50, message = "Role name must be less then or equal to 50 characters.")
   private String name;
@@ -50,6 +53,14 @@ public class RoleVO {
 
   public void setApplicationVO(ApplicationVO applicationVO) {
     this.applicationVO = applicationVO;
+  }
+  
+  public PermissionVO getPermissionVO() {
+    return permissionVO;
+  }
+
+  public void setPermissionVO(PermissionVO permissionVO) {
+    this.permissionVO = permissionVO;
   }
 
   public String getName() {
@@ -110,8 +121,8 @@ public class RoleVO {
 
   @Override
   public String toString() {
-    return "RoleVO [id=" + id + ", applicationVO=" + applicationVO + ", name=" + name + ", description=" + description
-        + ", active=" + active + ", createdBy=" + createdBy + ", updatedBy=" + updatedBy + ", createdOn=" + createdOn
-        + ", updatedOn=" + updatedOn + "]";
-  }  
+    return "RoleVO [id=" + id + ", applicationVO=" + applicationVO + ", permissionVO=" + permissionVO + ", name=" + name
+        + ", description=" + description + ", active=" + active + ", createdBy=" + createdBy + ", updatedBy="
+        + updatedBy + ", createdOn=" + createdOn + ", updatedOn=" + updatedOn + "]";
+  }
 }

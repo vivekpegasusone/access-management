@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.drishti.accessmanagement.dto.AuditableDto;
 import com.drishti.accessmanagement.dto.application.ApplicationDto;
+import com.drishti.accessmanagement.dto.permission.PermissionDto;
 import com.drishti.accessmanagement.dto.user.UserDto;
 
 public class RoleDto extends AuditableDto{
@@ -14,6 +15,7 @@ public class RoleDto extends AuditableDto{
 
   private boolean active;
   
+  private PermissionDto permissionDto;
   private ApplicationDto applicationDto;
 
   private List<UserDto> userDtos = new ArrayList<>();
@@ -81,13 +83,17 @@ public class RoleDto extends AuditableDto{
     this.userDtos.add(userDto);
   }
 
+  public PermissionDto getPermissionDto() {
+    return permissionDto;
+  }
+
+  public void setPermissionDto(PermissionDto permissionDto) {
+    this.permissionDto = permissionDto;
+  }
+
   @Override
   public String toString() {
-    return "RoleDto{" +
-        "id=" + getId() +
-        ", name='" + name + '\'' +
-        ", description='" + description + '\'' +
-        ", active=" + active +
-        '}';
+    return "RoleDto [name=" + name + ", description=" + description + ", active=" + active + ", permissionDto="
+        + permissionDto + ", applicationDto=" + applicationDto + ", userDtos=" + userDtos + "]";
   }
 }

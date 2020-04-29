@@ -22,9 +22,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.drishti.accessmanagement.controller.web.converter.ApplicationVOConverter;
+import com.drishti.accessmanagement.controller.web.converter.PermissionVOConverter;
 import com.drishti.accessmanagement.controller.web.utils.ApplicationUtil;
 import com.drishti.accessmanagement.controller.web.utils.RoleUtil;
 import com.drishti.accessmanagement.controller.web.view.application.ApplicationVO;
+import com.drishti.accessmanagement.controller.web.view.permission.PermissionVO;
 import com.drishti.accessmanagement.controller.web.view.role.RoleVO;
 import com.drishti.accessmanagement.dto.application.ApplicationDto;
 import com.drishti.accessmanagement.dto.role.RoleDto;
@@ -39,7 +41,7 @@ public class RoleController {
   
   @Autowired
   private RoleService roleService;
-
+  
   @Autowired
   private ApplicationService applicationService;
 
@@ -48,6 +50,7 @@ public class RoleController {
     StringTrimmerEditor stringtrimmer = new StringTrimmerEditor(true);
     binder.registerCustomEditor(String.class, stringtrimmer);
     binder.registerCustomEditor(ApplicationVO.class, "applicationVO", new ApplicationVOConverter());
+    binder.registerCustomEditor(PermissionVO.class, "permissionVO", new PermissionVOConverter());
   }
 
   @GetMapping(value = "/create")
@@ -83,7 +86,7 @@ public class RoleController {
       RoleDto roleDto = RoleUtil.toRoleDto(roleVO);
 
       if (Objects.isNull(roleDto.getId())) {
-        roleService.createRole(roleDto);
+        roleDto = roleService.createRole(roleDto);
         modelAndView.addObject("message", "Role record saved successfully.");
       } else {
         roleService.updateRole(roleDto);

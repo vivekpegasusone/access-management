@@ -5,6 +5,7 @@ CREATE DATABASE IF NOT EXISTS `access_management`;
 use `access_management`;
 
 -- -----------------------------------------------------------------------------
+
 CREATE TABLE `applications` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `name` varchar(25) NOT NULL,
@@ -42,6 +43,7 @@ CREATE TABLE `users` (
 CREATE TABLE `roles` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `applicationId` bigint(20) NOT NULL,
+  `permissionId` bigint(20),
   `name` varchar(50) NOT NULL,
   `description` varchar(100) DEFAULT NULL,
   `active` bit(1) DEFAULT NULL,
@@ -51,6 +53,7 @@ CREATE TABLE `roles` (
   `updatedOn` timestamp NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_Roles_Name` (`name`),
+  UNIQUE KEY `UK_Application_Permission` (`applicationId`,`permissionId`),
   KEY `FK_Role_Application_Id` (`applicationId`),
   CONSTRAINT `FK_Role_Application_Id` FOREIGN KEY (`applicationId`) REFERENCES `applications` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -108,20 +111,4 @@ CREATE TABLE `permissions` (
   KEY `FK_Permissions_Resource_Id` (`resourceId`),
   CONSTRAINT `FK_Permissions_Action_Id` FOREIGN KEY (`actionId`) REFERENCES `actions` (`id`),
   CONSTRAINT `FK_Permissions_Resource_Id` FOREIGN KEY (`resourceId`) REFERENCES `resources` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
-CREATE TABLE `permission_mappings` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `roleId` bigint(20) NOT NULL,
-  `permissionId` bigint(20) NOT NULL,
-  `active` bit(1) DEFAULT NULL,
-  `createdBy` varchar(25) NOT NULL,
-  `createdOn` timestamp NOT NULL,
-  `updatedBy` varchar(25) NOT NULL,
-  `updatedOn` timestamp NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FK_Permission_Mappings_Role_Id` (`roleId`),
-  KEY `FK_Permission_Mappings_Permission_Id` (`permissionId`),
-  CONSTRAINT `FK_Permission_Mappings_Role_Id` FOREIGN KEY (`roleId`) REFERENCES `roles` (`id`),
-  CONSTRAINT `FK_Permission_Mappings_Permission_Id` FOREIGN KEY (`permissionId`) REFERENCES `permissions` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

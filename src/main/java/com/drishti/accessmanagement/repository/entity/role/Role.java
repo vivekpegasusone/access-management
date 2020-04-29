@@ -11,14 +11,23 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import com.drishti.accessmanagement.repository.entity.application.Application;
 import com.drishti.accessmanagement.repository.entity.audit.Auditable;
+import com.drishti.accessmanagement.repository.entity.permission.Permission;
 import com.drishti.accessmanagement.repository.entity.user.User;
 
 @Entity
-@Table(name = "roles")
+@Table(
+    name = "roles",
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"applicationId", "permissionId"},
+        name = "UK_Application_Permission")
+    }
+)
 public class Role extends Auditable {
 
   private static final long serialVersionUID = -9041515827455699269L;
@@ -36,6 +45,10 @@ public class Role extends Auditable {
   @JoinColumn(name = "applicationId", nullable = false)
   private Application application;
 
+  @OneToOne
+  @JoinColumn(name = "permissionId", nullable = true)
+  private Permission permission;
+  
   @OneToMany(mappedBy = "role", cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.LAZY)
   private List<User> users = new ArrayList<>();
 
@@ -47,8 +60,9 @@ public class Role extends Auditable {
     this.name = builder.name;
     this.description = builder.description;
     this.active = builder.active;
-    this.application= builder.application;
     this.users = builder.users;
+    this.permission = builder.permission;
+    this.application= builder.application;    
   }
 
   public Long getId() {
@@ -91,6 +105,15 @@ public class Role extends Auditable {
     this.application = application;
   }
 
+  public Permission getPermission() {
+    return permission;
+  }
+
+  public void setPermission(Permission permission) {
+    this.permission = permission;
+    permission.setRole(this);
+  }
+
   public List<User> getUsers() {
     return users;
   }
@@ -124,7 +147,7 @@ public class Role extends Auditable {
     private boolean active;
     private String name;
     private String description;
-
+    private Permission permission;
     private Application application;
     
     private List<User> users = new ArrayList<>();
@@ -147,7 +170,12 @@ public class Role extends Auditable {
       this.description = description;
       return this;
     }
-
+    
+    public RoleBuilder setPermission(Permission permission) {
+      this.permission = permission;
+      return this;
+    }
+    
     public RoleBuilder setApplication(Application application) {
       this.application = application;
       return this;

@@ -21,10 +21,10 @@ import com.drishti.accessmanagement.service.transformer.role.RoleTransformer;
 
 @Service
 class RoleServiceImpl implements RoleService {
-
+  
   @Autowired
   private RoleRepository roleRepository;
-  
+    
   private Transformer<Role, RoleDto> roleTransformer = new RoleTransformer();
   
   private Transformer<Application, ApplicationDto> applicationTransformer = new ApplicationTransformer();
@@ -72,7 +72,7 @@ class RoleServiceImpl implements RoleService {
   @Transactional(propagation= Propagation.REQUIRED)
   public RoleDto createRole(RoleDto roleDto) {
     Role role = roleTransformer.transform(roleDto);
-    role = roleRepository.save(role);
+    role = roleRepository.saveAndFlush(role);
     return roleTransformer.transform(role);
   }
 

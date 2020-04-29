@@ -9,11 +9,11 @@
 	<tr>
 		<td><form:label path="applicationVO">Application : </form:label></td>
 		<td>
-		<form:select path="applicationVO">
-		<c:if test="${empty applicationVOList}">
-			<form:option value="-" label="--No Appliction--" />			
-		</c:if>
-		<form:options items="${applicationVOList}" itemValue="id" itemLabel="name" />
+		<form:select path="applicationVO" id="appPermission">
+			<c:if test="${empty permissionVO.applicationVO}">
+				<form:option value="-" label="--Select Appliction--"/>	
+			</c:if>	
+			<form:options items="${applicationVOList}" itemValue="id" itemLabel="name" />
 		</form:select>
 		</td>
 		<td><form:errors path="applicationVO"/></td>
@@ -31,7 +31,7 @@
 	<tr>
 		<td><form:label path="actionVO">Action : </form:label></td>
 		<td>
-		<form:select path="actionVO">
+		<form:select path="actionVO" id="action">
 		<c:if test="${empty permissionVO.actionVO}">
 			<form:option value="-" label="--Select Action--" />			
 		</c:if>
@@ -42,7 +42,7 @@
 	<tr>
 		<td><form:label path="resourceVO">Resource : </form:label></td>
 		<td>
-		<form:select path="resourceVO">
+		<form:select path="resourceVO" id="resource">
 		<c:if test="${empty permissionVO.resourceVO}">
 			<form:option value="-" label="--Select Resource--" />			
 		</c:if>
@@ -62,6 +62,8 @@
 			</c:choose>			
 			<form:hidden path="id"/>
 			<form:hidden path="active"/>
+			<input id="actionId" type="hidden" value="${permissionVO.actionVO.id}" />
+			<input id="resourceId" type="hidden" value="${permissionVO.resourceVO.id}" />
 		</td>	
 	</tr>
 </table>

@@ -2,6 +2,7 @@ package com.drishti.accessmanagement.service.transformer.user;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.util.CollectionUtils;
@@ -21,15 +22,16 @@ public class UserTransformer implements Transformer<User, UserDto> {
   
   @Override
   public UserDto transform(User user) {
-    ApplicationDto appDto = applicationTransformer.transform(user.getApplication());
-    RoleDto roleDto =  transformToRoleDto(user.getRole());
-    
-    UserDto userDto = new UserDto(user.getId(), user.getLoginId(), user.getPassword(), user.getFirstName(), user.getLastName(),
-        user.getEmailId(), user.isActive());
+    UserDto userDto = null;
+    if (Objects.nonNull(user)) {
+      ApplicationDto appDto = applicationTransformer.transform(user.getApplication());
+      RoleDto roleDto = transformToRoleDto(user.getRole());
 
-    userDto.setRoleDto(roleDto);
-    userDto.setApplicationDto(appDto);
-    
+      userDto = new UserDto(user.getId(), user.getLoginId(), user.getPassword(), user.getFirstName(),
+          user.getLastName(), user.getEmailId(), user.isActive());
+      userDto.setRoleDto(roleDto);
+      userDto.setApplicationDto(appDto);
+    }
     return userDto;
   }
 
@@ -41,41 +43,43 @@ public class UserTransformer implements Transformer<User, UserDto> {
       userDtoList = Collections.emptyList();
     } else {
       userDtoList = users.stream().map(u -> transform(u)).collect(Collectors.toList());
-//      userDtoList = new ArrayList<>(users.size());
-//      users.forEach(u -> {
-//        userDtoList.add(transform(u));
-//      });
     }
     
     return userDtoList;
   }
 
   @Override
-  public User transform(UserDto userDto) {                
-    Role role = transformToRole(userDto.getRoleDto());
-    Application application = applicationTransformer.transform(userDto.getApplicationDto());
-        
-    User user = new User.UserBuilder(userDto.getLoginId()).setId(userDto.getId()).setFirstName(userDto.getFirstName())
-        .setLastName(userDto.getLastName()).setEmailId(userDto.getEmailId()).setPassword(userDto.getPassword())
-        .setActive(userDto.isActive()).setRole(role).setApplication(application).build();
-        
+  public User transform(UserDto userDto) {
+    User user = null;
+    if (Objects.nonNull(userDto)) {
+      Role role = transformToRole(userDto.getRoleDto());
+      Application application = applicationTransformer.transform(userDto.getApplicationDto());
+
+      user = new User.UserBuilder(userDto.getLoginId()).setId(userDto.getId()).setFirstName(userDto.getFirstName())
+          .setLastName(userDto.getLastName()).setEmailId(userDto.getEmailId()).setPassword(userDto.getPassword())
+          .setActive(userDto.isActive()).setRole(role).setApplication(application).build();
+    }
     return user;
   }
   
   private Role transformToRole(RoleDto roleDto) {
-    Role role = new Role.RoleBuilder(roleDto.getName()).setId(roleDto.getId()).setDescription(roleDto.getDescription())
-        .setActive(roleDto.isActive()).build();
-   
+    Role role = null;
+    if (Objects.nonNull(roleDto)) {
+      role = new Role.RoleBuilder(roleDto.getName()).setId(roleDto.getId()).setDescription(roleDto.getDescription())
+          .setActive(roleDto.isActive()).build();
+    }
     return role;
   }
 
   private RoleDto transformToRoleDto(Role role) {
-    RoleDto roleDto = new RoleDto(role.getId(), role.getName(), role.getDescription(), role.isActive());
-    roleDto.setCreatedBy(role.getCreatedBy());
-    roleDto.setCreatedOn(role.getCreatedOn());
-    roleDto.setUpdatedBy(role.getUpdatedBy());
-    roleDto.setUpdatedOn(role.getUpdatedOn());
-    
+    RoleDto roleDto = null;
+    if (Objects.nonNull(role)) {
+      roleDto = new RoleDto(role.getId(), role.getName(), role.getDescription(), role.isActive());
+      roleDto.setCreatedBy(role.getCreatedBy());
+      roleDto.setCreatedOn(role.getCreatedOn());
+      roleDto.setUpdatedBy(role.getUpdatedBy());
+      roleDto.setUpdatedOn(role.getUpdatedOn());
+    }
     return roleDto;
   }
 }

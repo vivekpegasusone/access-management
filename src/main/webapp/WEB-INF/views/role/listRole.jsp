@@ -6,6 +6,7 @@
 			<tr>
 				<th>Name</th>
 				<th>Application Name</th>
+				<th>Permission Name</th>
 				<th>Description</th>
 				<th>Active</th>
 				<th>Created By</th>	
@@ -18,6 +19,7 @@
 			<tr>
  				<td><a href="<c:url value='/role/edit?roleId=${roleVO.id}'/>">${roleVO.name}</a></td>
  				<td>${roleVO.applicationVO.name}</td>
+ 				<td><c:out value="${roleVO.permissionVO.name}" default="-"></c:out></td>
 				<td>${roleVO.description}</td>
 				<td>
 				<c:choose>

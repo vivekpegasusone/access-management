@@ -14,6 +14,9 @@ public class PermissionDto extends AuditableDto {
   private ActionDto actionDto;
   private ResourceDto resourceDto;
   
+  public PermissionDto() {
+ }
+  
   public PermissionDto(String name) {
     this.name = name;
   }

@@ -33,6 +33,13 @@ public class PermissionVO {
   private ActionVO actionVO;
   private ResourceVO resourceVO;
 
+  public PermissionVO() {   
+  }
+  
+  public PermissionVO(Long id) {
+    this.id = id;
+  }
+  
   public Long getId() {
     return id;
   }

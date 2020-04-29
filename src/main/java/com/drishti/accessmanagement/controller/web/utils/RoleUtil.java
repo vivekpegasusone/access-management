@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import com.drishti.accessmanagement.controller.web.view.role.RoleVO;
 import com.drishti.accessmanagement.dto.application.ApplicationDto;
+import com.drishti.accessmanagement.dto.permission.PermissionDto;
 import com.drishti.accessmanagement.dto.role.RoleDto;
 
 public class RoleUtil {
@@ -26,6 +27,10 @@ public class RoleUtil {
       roleVO.setUpdatedOn(roleDto.getUpdatedOn());
 
       roleVO.setApplicationVO(ApplicationUtil.toApplicationView(roleDto.getApplicationDto()));
+      
+      if(nonNull(roleDto.getPermissionDto())) {
+        roleVO.setPermissionVO(PermissionUtil.toPermissionView(roleDto.getPermissionDto()));
+      }
     }
     
     return roleVO;
@@ -37,7 +42,13 @@ public class RoleUtil {
     ApplicationDto appDto = new ApplicationDto();
     appDto.setId(roleView.getApplicationVO().getId());
     roleDto.setApplicationDto(ApplicationUtil.toApplicationDto(roleView.getApplicationVO()));
-
+    
+    if (nonNull(roleView.getPermissionVO())) {
+      PermissionDto permissionDto = new PermissionDto();
+      permissionDto.setId(roleView.getPermissionVO().getId());      
+      roleDto.setPermissionDto(permissionDto);
+    }
+    
     return roleDto;
 
   };

@@ -3,6 +3,7 @@ package com.drishti.accessmanagement.controller.web.utils;
 import static java.util.Objects.nonNull;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.drishti.accessmanagement.controller.web.view.permission.PermissionVO;
@@ -28,6 +29,10 @@ public class PermissionUtil {
 
       permissionVO.setActionVO(ActionUtil.toActionView(permissionDto.getActionDto()));
       permissionVO.setResourceVO(ResourceUtil.toResourceView(permissionDto.getResourceDto()));
+      
+      if(Objects.nonNull(permissionDto.getActionDto())) {
+        permissionVO.setApplicationVO(ApplicationUtil.toApplicationView(permissionDto.getActionDto().getApplicationDto()));
+      }
     }
     
     return permissionVO;

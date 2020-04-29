@@ -1,14 +1,13 @@
 package com.drishti.accessmanagement.repository.dao.permission;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.drishti.accessmanagement.repository.entity.action.Action;
 import com.drishti.accessmanagement.repository.entity.permission.Permission;
-
-import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface PermissionRepository extends JpaRepository<Permission, Long> {
@@ -23,6 +22,6 @@ public interface PermissionRepository extends JpaRepository<Permission, Long> {
       + "inner join fetch p.action a "
       + "inner join fetch p.resource r "
       + "inner join fetch r.application app "
-      + "where a.application.id = r.application.id and app.active = true")
+      + "where a.application.id = r.application.id and app.active = true and a.application.id = :applicationId")
   List<Permission> findPermissionsByApplicationId(Long applicationId);
 }

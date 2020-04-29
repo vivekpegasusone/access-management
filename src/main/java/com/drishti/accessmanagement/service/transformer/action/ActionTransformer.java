@@ -2,6 +2,7 @@ package com.drishti.accessmanagement.service.transformer.action;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.util.CollectionUtils;
@@ -19,26 +20,31 @@ public class ActionTransformer implements Transformer<Action, ActionDto> {
 
   @Override
   public ActionDto transform(Action action) {
-    ApplicationDto appDto = applicationTransformer.transform(action.getApplication());
+    ActionDto actionDto = null;
+    if (Objects.nonNull(action)) {
+      actionDto = new ActionDto(action.getId(), action.getName(), action.getDescription(), action.isActive());
+      actionDto.setCreatedBy(action.getCreatedBy());
+      actionDto.setCreatedOn(action.getCreatedOn());
+      actionDto.setUpdatedBy(action.getUpdatedBy());
+      actionDto.setUpdatedOn(action.getUpdatedOn());
 
-    ActionDto actionDto = new ActionDto(action.getId(), action.getName(), action.getDescription(), action.isActive());
-    actionDto.setCreatedBy(action.getCreatedBy());
-    actionDto.setCreatedOn(action.getCreatedOn());
-    actionDto.setUpdatedBy(action.getUpdatedBy());
-    actionDto.setUpdatedOn(action.getUpdatedOn());
+      ApplicationDto appDto = applicationTransformer.transform(action.getApplication());
 
-    actionDto.setApplicationDto(appDto);
-
+      actionDto.setApplicationDto(appDto);
+    }
     return actionDto;
   }
 
   @Override
   public Action transform(ActionDto actionDto) {
-    Action action = new Action.ActionBuilder(actionDto.getName()).setId(actionDto.getId())
-        .setDescription(actionDto.getDescription()).setActive(actionDto.isActive()).build();
+    Action action = null;
+    if (Objects.nonNull(actionDto)) {
+      action = new Action.ActionBuilder(actionDto.getName()).setId(actionDto.getId())
+          .setDescription(actionDto.getDescription()).setActive(actionDto.isActive()).build();
 
-    Application app = applicationTransformer.transform(actionDto.getApplicationDto());
-    action.setApplication(app);
+      Application app = applicationTransformer.transform(actionDto.getApplicationDto());
+      action.setApplication(app);
+    }
 
     return action;
   }

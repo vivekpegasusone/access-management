@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.drishti.accessmanagement.controller.web.converter.ActionVOConverter;
+import com.drishti.accessmanagement.controller.web.converter.ApplicationVOConverter;
 import com.drishti.accessmanagement.controller.web.converter.ResourceVOConverter;
 import com.drishti.accessmanagement.controller.web.utils.ApplicationUtil;
 import com.drishti.accessmanagement.controller.web.utils.PermissionUtil;
@@ -52,6 +53,7 @@ public class PermissionController {
     binder.registerCustomEditor(String.class, stringtrimmer);
     binder.registerCustomEditor(ActionVO.class, "actionVO", new ActionVOConverter());
     binder.registerCustomEditor(ResourceVO.class, "resourceVO", new ResourceVOConverter());
+    binder.registerCustomEditor(ApplicationVO.class, "applicationVO", new ApplicationVOConverter());
   }
 
   @GetMapping(value = "/create")

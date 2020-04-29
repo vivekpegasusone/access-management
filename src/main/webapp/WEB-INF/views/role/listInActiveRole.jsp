@@ -6,6 +6,7 @@
 			<tr>
 				<th>Name</th>
 				<th>Application Name</th>
+				<th>Permission Name</th>
 				<th>Description</th>
 				<th>Active</th>
 				<th>Created By</th>	
@@ -17,6 +18,7 @@
 			<tr>
  				<td>${roleVO.name}</td>
  				<td>${roleVO.applicationVO.name}</td>
+ 				<td><c:out value="${roleVO.permissionVO.name}" default="-"></c:out></td>
 				<td>${roleVO.description}</td>
 				<td>
 				<c:choose>

@@ -3,6 +3,7 @@ package com.drishti.accessmanagement.service.transformer.application;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.util.CollectionUtils;
 
@@ -14,12 +15,14 @@ public class ApplicationTransformer implements Transformer<Application, Applicat
 
   @Override
   public ApplicationDto transform(Application application) {
-    ApplicationDto applicationDto = new ApplicationDto(application.getId(), application.getName(), 
-        application.getDescription(), application.isActive(), application.getCreatedBy(), 
-        application.getUpdatedBy(), application.getCreatedOn(), application.getUpdatedOn());
+    ApplicationDto applicationDto = null;
+    if (Objects.nonNull(application)) {
+      applicationDto = new ApplicationDto(application.getId(), application.getName(), application.getDescription(),
+          application.isActive(), application.getCreatedBy(), application.getUpdatedBy(), application.getCreatedOn(),
+          application.getUpdatedOn());
+    }
     
     return applicationDto;
-
   }
 
   @Override
@@ -41,11 +44,11 @@ public class ApplicationTransformer implements Transformer<Application, Applicat
 
   @Override
   public Application transform(ApplicationDto applicationDto) {
-    Application application = new Application.ApplicationBuilder(applicationDto.getName())
-        .setId(applicationDto.getId())
-        .setDescription(applicationDto.getDescription())
-        .setActive(applicationDto.isActive()).build();
-    
+    Application application = null;
+    if (Objects.nonNull(applicationDto)) {
+      application = new Application.ApplicationBuilder(applicationDto.getName()).setId(applicationDto.getId())
+          .setDescription(applicationDto.getDescription()).setActive(applicationDto.isActive()).build();
+    }
     return application;
   }
 

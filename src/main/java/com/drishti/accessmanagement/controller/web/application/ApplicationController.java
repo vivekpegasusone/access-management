@@ -28,9 +28,15 @@ import org.springframework.web.servlet.ModelAndView;
 import com.drishti.accessmanagement.controller.web.utils.ApplicationUtil;
 import com.drishti.accessmanagement.controller.web.view.OptionView;
 import com.drishti.accessmanagement.controller.web.view.application.ApplicationVO;
+import com.drishti.accessmanagement.dto.action.ActionDto;
 import com.drishti.accessmanagement.dto.application.ApplicationDto;
+import com.drishti.accessmanagement.dto.permission.PermissionDto;
+import com.drishti.accessmanagement.dto.resource.ResourceDto;
 import com.drishti.accessmanagement.dto.role.RoleDto;
+import com.drishti.accessmanagement.service.action.ActionService;
 import com.drishti.accessmanagement.service.application.ApplicationService;
+import com.drishti.accessmanagement.service.permission.PermissionService;
+import com.drishti.accessmanagement.service.resource.ResourceService;
 import com.drishti.accessmanagement.service.role.RoleService;
 
 @Controller
@@ -41,6 +47,15 @@ public class ApplicationController {
   
   @Autowired
   private RoleService roleService;
+  
+  @Autowired
+  private ActionService actionService;
+  
+  @Autowired
+  private ResourceService resourceService;
+  
+  @Autowired
+  private PermissionService permissionService;
   
   @Autowired
   private ApplicationService applicationService;
@@ -145,6 +160,33 @@ public class ApplicationController {
       HttpServletResponse response) {
     List<RoleDto> roleDtoList = roleService.findRolesByApplicationId(applicationId);
     List<OptionView> optionViewList = roleDtoList.stream().map(r -> new OptionView(r.getId(), r.getName())).collect(Collectors.toList());
+    return optionViewList;
+  }
+  
+  @GetMapping(value = "/actions")
+  @ResponseBody
+  public List<OptionView> getActionsForApplication(@RequestParam("applicationId") long applicationId, HttpServletRequest request,
+      HttpServletResponse response) {
+    List<ActionDto> actionDtoList = actionService.findActionsByApplicationId(applicationId);
+    List<OptionView> optionViewList = actionDtoList.stream().map(a -> new OptionView(a.getId(), a.getName())).collect(Collectors.toList());
+    return optionViewList;
+  }
+  
+  @GetMapping(value = "/resources")
+  @ResponseBody
+  public List<OptionView> getResourcesForApplication(@RequestParam("applicationId") long applicationId, HttpServletRequest request,
+      HttpServletResponse response) {
+    List<ResourceDto> resourceDtoList = resourceService.findResourcesByApplicationId(applicationId);
+    List<OptionView> optionViewList = resourceDtoList.stream().map(r -> new OptionView(r.getId(), r.getName())).collect(Collectors.toList());
+    return optionViewList;
+  }
+
+  @GetMapping(value = "/permissions")
+  @ResponseBody
+  public List<OptionView> getPermissionsForApplication(@RequestParam("applicationId") long applicationId, HttpServletRequest request,
+      HttpServletResponse response) {
+    List<PermissionDto> permissionDtoList = permissionService.findPermissionsByApplicationId(applicationId);
+    List<OptionView> optionViewList = permissionDtoList.stream().map(r -> new OptionView(r.getId(), r.getName())).collect(Collectors.toList());
     return optionViewList;
   }
 }

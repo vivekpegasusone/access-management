@@ -1,11 +1,20 @@
 package com.drishti.accessmanagement.repository.entity.permission;
 
+import java.util.Objects;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
 import com.drishti.accessmanagement.repository.entity.action.Action;
 import com.drishti.accessmanagement.repository.entity.audit.Auditable;
 import com.drishti.accessmanagement.repository.entity.resource.Resource;
-
-import javax.persistence.*;
-import java.util.Objects;
+import com.drishti.accessmanagement.repository.entity.role.Role;
 
 @Entity
 @Table(
@@ -35,6 +44,9 @@ public class Permission extends Auditable {
   @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "resourceId", nullable = false)
   private Resource resource;
+  
+  @OneToOne(mappedBy = "permission")
+  private Role role;
 
   protected Permission() {
   }
@@ -46,6 +58,7 @@ public class Permission extends Auditable {
     this.setActive(builder.active);
     this.setAction(builder.action);
     this.setResource(builder.resource);
+    this.setRole(builder.role);
   }
 
   public Long getId() {
@@ -78,6 +91,14 @@ public class Permission extends Auditable {
 
   public void setActive(boolean active) {
     this.active = active;
+  }
+
+  public Role getRole() {
+    return role;
+  }
+
+  public void setRole(Role role) {
+    this.role = role;
   }
 
   public Action getAction() {
@@ -122,8 +143,10 @@ public class Permission extends Auditable {
     private String name;
     private String description;
     private boolean active;
+    
+    private Role role;
     private Action action;
-    private Resource resource;
+    private Resource resource;    
 
     public PermissionBuilder(String name) {
       this.name = name;
@@ -139,6 +162,11 @@ public class Permission extends Auditable {
       return this;
     }
 
+    public PermissionBuilder setRole(Role role) {
+      this.role = role;
+      return this;
+    }
+    
     public PermissionBuilder setAction(Action action) {
       this.action = action;
       return this;
