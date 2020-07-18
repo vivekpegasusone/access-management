@@ -3,6 +3,7 @@ package com.drishti.accessmanagement.service.application;
 import java.util.List;
 
 import com.drishti.accessmanagement.dto.application.ApplicationDto;
+import com.drishti.accessmanagement.exception.DuplicateRecordException;
 import com.drishti.accessmanagement.exception.RecordNotFoundException;
 
 public interface ApplicationService {
@@ -17,9 +18,9 @@ public interface ApplicationService {
 
   ApplicationDto findApplicationByname(String name) throws RecordNotFoundException;
 
-  ApplicationDto createApplication(ApplicationDto applicationDto);
+  ApplicationDto createApplication(ApplicationDto applicationDto) throws DuplicateRecordException;
 
-  ApplicationDto updateApplication(ApplicationDto applicationDto) throws RecordNotFoundException;
+  ApplicationDto updateApplication(ApplicationDto applicationDto) throws RecordNotFoundException, DuplicateRecordException ;
 
   void deleteApplicationById(Long id) throws RecordNotFoundException;
 }

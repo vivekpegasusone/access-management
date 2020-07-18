@@ -1,36 +1,40 @@
 package com.drishti.accessmanagement.handler.exception;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.servlet.ModelAndView;
+
+import com.drishti.accessmanagement.exception.ErrorInfo;
+import com.drishti.accessmanagement.exception.InvalidRecordException;
+import com.drishti.accessmanagement.exception.RecordNotFoundException;
 
 @ControllerAdvice
 public class AccessManagementExceptionHandler {
 
+  public static final String ERROR_INFO = "errorInfo";
   public static final String DEFAULT_ERROR_VIEW = "error";
 
+  @ExceptionHandler(value = {RecordNotFoundException.class})
+  @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "No record found.")
+  public void noRecordHandler(HttpServletRequest request, Exception exception) throws Exception {
+    ErrorInfo errorInfo = new ErrorInfo(request.getRequestURL().toString(), exception); 
+    request.setAttribute(ERROR_INFO, errorInfo);
+  }   
+  
+  @ExceptionHandler(value = {InvalidRecordException.class})
+  @ResponseStatus(value = HttpStatus.PRECONDITION_FAILED, reason = "Precondition Failed.")
+  public void invalidRecordHandler(HttpServletRequest request, Exception exception) throws Exception {
+    ErrorInfo errorInfo = new ErrorInfo(request.getRequestURL().toString(), exception); 
+    request.setAttribute(ERROR_INFO, errorInfo);
+  } 
+  
   @ExceptionHandler(value = Exception.class)
-  public ModelAndView exceptionHandler(HttpServletRequest req, Exception e) throws Exception {
-    // If the exception is annotated with @ResponseStatus re-throw it and let the framework handle it.
-    if (AnnotationUtils.findAnnotation (e.getClass(), ResponseStatus.class) != null) {
-      throw e;
-    }
-
-    // Otherwise setup and send the user to a default error-view.
-    ModelAndView mav = new ModelAndView();
-    StringWriter sw = new StringWriter();
-    PrintWriter pw = new PrintWriter(sw);
-    e.printStackTrace(pw);
-    mav.addObject("exception", sw.toString());
-    mav.addObject("url", req.getRequestURL()); 
-    mav.setViewName(DEFAULT_ERROR_VIEW);
-    return mav;
-  }
+  @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR, reason = "Internal Server Error.")
+  public void exceptionHandler(HttpServletRequest request, Exception exception) throws Exception {
+    ErrorInfo errorInfo = new ErrorInfo(request.getRequestURL().toString(), exception); 
+    request.setAttribute(ERROR_INFO, errorInfo);
+  }    
 }

@@ -28,6 +28,8 @@ import com.drishti.accessmanagement.controller.web.view.action.ActionVO;
 import com.drishti.accessmanagement.controller.web.view.application.ApplicationVO;
 import com.drishti.accessmanagement.dto.action.ActionDto;
 import com.drishti.accessmanagement.dto.application.ApplicationDto;
+import com.drishti.accessmanagement.exception.DuplicateRecordException;
+import com.drishti.accessmanagement.exception.RecordNotFoundException;
 import com.drishti.accessmanagement.service.action.ActionService;
 import com.drishti.accessmanagement.service.application.ApplicationService;
 
@@ -61,12 +63,18 @@ public class ActionController {
 
   @GetMapping(value = "/edit")
   public ModelAndView showEditAction(@RequestParam("actionId") long actionId) {
-    ModelAndView modelAndView = new ModelAndView(VIEW_CREATE_ACTION);
-    ActionDto actionDto = actionService.findActionById(actionId);
-
-    List<ApplicationDto> applicationDtoList = applicationService.findActiveApplications();
-    populateActionView(modelAndView, actionDto, applicationDtoList);
-
+    ModelAndView modelAndView = null; 
+    try {
+      ActionDto actionDto = actionService.findActionById(actionId);
+      modelAndView = new ModelAndView(VIEW_CREATE_ACTION);
+      
+      List<ApplicationDto> applicationDtoList = applicationService.findActiveApplications();
+      populateActionView(modelAndView, actionDto, applicationDtoList);      
+    } catch (RecordNotFoundException e) {
+      modelAndView = listActiveActions();
+      modelAndView.addObject("message", e.getMessage());
+    }
+    
     return modelAndView;
   }
 
@@ -82,11 +90,19 @@ public class ActionController {
       ActionDto actionDto = ActionUtil.toActionDto(actionVO);
 
       if (Objects.isNull(actionDto.getId())) {
-        actionService.createAction(actionDto);
-        modelAndView.addObject("message", "Action record saved successfully.");
+        try {
+          actionService.createAction(actionDto);
+          modelAndView.addObject("message", "Action record saved successfully.");
+        } catch (DuplicateRecordException e) {
+          modelAndView.addObject("message", e.getMessage());
+        }        
       } else {
-        actionService.updateAction(actionDto);
-        modelAndView.addObject("message", "Action record updated successfully.");
+        try {
+          actionService.updateAction(actionDto);
+          modelAndView.addObject("message", "Action record updated successfully.");
+        } catch (RecordNotFoundException | DuplicateRecordException e) {
+          modelAndView.addObject("message", e.getMessage());
+        }        
       }
     }
     
@@ -137,8 +153,15 @@ public class ActionController {
 
   @GetMapping(value = "/delete")
   public ModelAndView delete(@RequestParam("actionId") long actionId) {
-    actionService.deleteActionById(actionId);
-    return listActiveActions();
+    ModelAndView modelAndView = null;
+    try {
+      actionService.deleteActionById(actionId);
+      modelAndView = listActiveActions();
+    } catch (RecordNotFoundException e) {
+      modelAndView = listActiveActions();
+      modelAndView.addObject("message", e.getMessage());
+    }
+    return modelAndView;
   }
 
   private void populateActionView(ModelAndView modelAndView, List<ApplicationDto> applicationDtoList) {

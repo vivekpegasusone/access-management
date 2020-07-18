@@ -3,6 +3,7 @@ package com.drishti.accessmanagement.service.role;
 import java.util.List;
 
 import com.drishti.accessmanagement.dto.role.RoleDto;
+import com.drishti.accessmanagement.exception.DuplicateRecordException;
 import com.drishti.accessmanagement.exception.RecordNotFoundException;
 
 public interface RoleService {
@@ -15,9 +16,9 @@ public interface RoleService {
 
   RoleDto findRoleById(Long id) throws RecordNotFoundException;
 
-  RoleDto createRole(RoleDto roleDto);
+  RoleDto createRole(RoleDto roleDto) throws DuplicateRecordException;
 
-  RoleDto updateRole(RoleDto roleDto) throws RecordNotFoundException;
+  RoleDto updateRole(RoleDto roleDto) throws RecordNotFoundException, DuplicateRecordException;
 
   void deleteRoleById(Long id) throws RecordNotFoundException;
 

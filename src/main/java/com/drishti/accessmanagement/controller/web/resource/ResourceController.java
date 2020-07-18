@@ -28,6 +28,8 @@ import com.drishti.accessmanagement.controller.web.view.application.ApplicationV
 import com.drishti.accessmanagement.controller.web.view.resource.ResourceVO;
 import com.drishti.accessmanagement.dto.application.ApplicationDto;
 import com.drishti.accessmanagement.dto.resource.ResourceDto;
+import com.drishti.accessmanagement.exception.DuplicateRecordException;
+import com.drishti.accessmanagement.exception.RecordNotFoundException;
 import com.drishti.accessmanagement.service.application.ApplicationService;
 import com.drishti.accessmanagement.service.resource.ResourceService;
 
@@ -61,12 +63,16 @@ public class ResourceController {
 
   @GetMapping(value = "/edit")
   public ModelAndView showEditResource(@RequestParam("resourceId") long resourceId) {
-    ModelAndView modelAndView = new ModelAndView(VIEW_CREATE_RESOURCE);
-    ResourceDto resourceDto = resourceService.findResourceById(resourceId);
-
-    List<ApplicationDto> applicationDtoList = applicationService.findActiveApplications();
-    populateResourceView(modelAndView, resourceDto, applicationDtoList);
-
+    ModelAndView modelAndView = null;
+    try {
+      modelAndView = new ModelAndView(VIEW_CREATE_RESOURCE);
+      ResourceDto resourceDto = resourceService.findResourceById(resourceId);
+      List<ApplicationDto> applicationDtoList = applicationService.findActiveApplications();
+      populateResourceView(modelAndView, resourceDto, applicationDtoList);
+    } catch (RecordNotFoundException e) {
+      modelAndView = listActiveResources();
+      modelAndView.addObject("message", e.getMessage());
+    }
     return modelAndView;
   }
 
@@ -82,11 +88,19 @@ public class ResourceController {
       ResourceDto resourceDto = ResourceUtil.toResourceDto(resourceVO);
 
       if (Objects.isNull(resourceDto.getId())) {
-        resourceService.createResource(resourceDto);
-        modelAndView.addObject("message", "Resource record saved successfully.");
+        try {
+          resourceService.createResource(resourceDto);
+          modelAndView.addObject("message", "Resource record saved successfully.");
+        } catch (DuplicateRecordException e) {
+          modelAndView.addObject("message", e.getMessage());
+        }        
       } else {
-        resourceService.updateResource(resourceDto);
-        modelAndView.addObject("message", "Resource record updated successfully.");
+        try {
+          resourceService.updateResource(resourceDto);
+          modelAndView.addObject("message", "Resource record updated successfully.");
+        } catch (RecordNotFoundException | DuplicateRecordException e) {
+          modelAndView.addObject("message", e.getMessage());
+        }        
       }
     }
     
@@ -137,8 +151,15 @@ public class ResourceController {
 
   @GetMapping(value = "/delete")
   public ModelAndView delete(@RequestParam("resourceId") long resourceId) {
-    resourceService.deleteResourceById(resourceId);
-    return listActiveResources();
+    ModelAndView modelAndView = null;
+    try {
+      resourceService.deleteResourceById(resourceId);
+      modelAndView = listActiveResources();
+    } catch (RecordNotFoundException e) {
+      modelAndView = listActiveResources();
+      modelAndView.addObject("message", e.getMessage());
+    }
+    return modelAndView;
   }
 
   private void populateResourceView(ModelAndView modelAndView, List<ApplicationDto> applicationDtoList) {

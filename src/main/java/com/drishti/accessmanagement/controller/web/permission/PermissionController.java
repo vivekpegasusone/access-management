@@ -32,6 +32,8 @@ import com.drishti.accessmanagement.controller.web.view.permission.PermissionVO;
 import com.drishti.accessmanagement.controller.web.view.resource.ResourceVO;
 import com.drishti.accessmanagement.dto.application.ApplicationDto;
 import com.drishti.accessmanagement.dto.permission.PermissionDto;
+import com.drishti.accessmanagement.exception.DuplicateRecordException;
+import com.drishti.accessmanagement.exception.RecordNotFoundException;
 import com.drishti.accessmanagement.service.application.ApplicationService;
 import com.drishti.accessmanagement.service.permission.PermissionService;
 
@@ -67,11 +69,17 @@ public class PermissionController {
 
   @GetMapping(value = "/edit")
   public ModelAndView showEditPermission(@RequestParam("permissionId") long permissionId) {
-    ModelAndView modelAndView = new ModelAndView(VIEW_CREATE_PERMISSION);
-    PermissionDto permissionDto = permissionService.findPermissionById(permissionId);
-
-    List<ApplicationDto> applicationDtoList = applicationService.findActiveApplications();
-    populatePermissionView(modelAndView, permissionDto, applicationDtoList);
+    ModelAndView modelAndView = null;
+    
+    try {
+      modelAndView = new ModelAndView(VIEW_CREATE_PERMISSION);
+      PermissionDto permissionDto = permissionService.findPermissionById(permissionId);
+      List<ApplicationDto> applicationDtoList = applicationService.findActiveApplications();
+      populatePermissionView(modelAndView, permissionDto, applicationDtoList);
+    } catch (RecordNotFoundException e) {
+      modelAndView = listActivePermissions();
+      modelAndView.addObject("message", e.getMessage());
+    }   
 
     return modelAndView;
   }
@@ -88,11 +96,19 @@ public class PermissionController {
       PermissionDto permissionDto = PermissionUtil.toPermissionDto(permissionVO);
 
       if (Objects.isNull(permissionDto.getId())) {
-        permissionService.createPermission(permissionDto);
-        modelAndView.addObject("message", "Permission record saved successfully.");
+        try {
+          permissionService.createPermission(permissionDto);
+          modelAndView.addObject("message", "Permission record saved successfully.");
+        } catch (DuplicateRecordException e) {
+          modelAndView.addObject("message", e.getMessage());
+        }       
       } else {
-        permissionService.updatePermission(permissionDto);
-        modelAndView.addObject("message", "Permission record updated successfully.");
+        try {
+          permissionService.updatePermission(permissionDto);
+          modelAndView.addObject("message", "Permission record updated successfully.");
+        } catch (RecordNotFoundException | DuplicateRecordException e) {
+          modelAndView.addObject("message", e.getMessage());
+        }        
       }
     }
 
@@ -143,7 +159,14 @@ public class PermissionController {
 
   @GetMapping(value = "/delete")
   public ModelAndView delete(@RequestParam("permissionId") long permissionId) {
-    permissionService.deletePermissionById(permissionId);
+    ModelAndView modelAndView = null;
+    try {
+      permissionService.deletePermissionById(permissionId);
+      modelAndView = listActivePermissions();
+    } catch (RecordNotFoundException e) {
+      modelAndView = listActivePermissions();
+      modelAndView.addObject("message", e.getMessage());
+    }
     return listActivePermissions();
   }
 

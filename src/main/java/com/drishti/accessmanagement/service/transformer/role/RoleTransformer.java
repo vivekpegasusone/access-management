@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import com.drishti.accessmanagement.dto.application.ApplicationDto;
@@ -21,10 +23,13 @@ import com.drishti.accessmanagement.service.transformer.permission.PermissionTra
 
 public class RoleTransformer implements Transformer<Role, RoleDto> {
 
+  private static final Logger logger = LoggerFactory.getLogger(RoleTransformer.class);
+  
   private Transformer<Application, ApplicationDto> applicationTransformer = new ApplicationTransformer();
   
   @Override
   public RoleDto transform(Role role) {
+    logger.info("Transforming role entity to role dto.");
     RoleDto roleDto = null;
     if (Objects.nonNull(role)) {
       ApplicationDto appDto = applicationTransformer.transform(role.getApplication());
@@ -47,7 +52,8 @@ public class RoleTransformer implements Transformer<Role, RoleDto> {
   }
 
   @Override
-  public List<RoleDto> transform(List<Role> roles) {    
+  public List<RoleDto> transform(List<Role> roles) {   
+    logger.info("Transforming role entitys to role dtos.");
     List<RoleDto> roleDtos;
     
     if(CollectionUtils.isEmpty(roles)) {
@@ -61,6 +67,7 @@ public class RoleTransformer implements Transformer<Role, RoleDto> {
 
   @Override
   public Role transform(RoleDto roleDto) {
+    logger.info("Transforming role dto to role entity.");
     Role role = null;
     if (Objects.nonNull(roleDto)) {
       Application app = applicationTransformer.transform(roleDto.getApplicationDto());

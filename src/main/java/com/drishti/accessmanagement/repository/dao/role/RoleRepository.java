@@ -19,6 +19,9 @@ public interface RoleRepository extends JpaRepository<Role, Long> {
   List<Role> findByActiveFalse();
   
   @Query("from Role r inner join fetch r.application a where a.id = :applicationId and r.active = true")
-  List<Role> findRolesByApplicationId(Long applicationId); 
+  List<Role> findRolesByApplicationId(Long applicationId);
+
+  @Query("from Role r where r.name = :name or (r.application.id = :applicationId and r.permission.id = :permissionId)")
+  Optional<Role> findByNameOrApplicationAndPermission(String name, Long applicationId, Long permissionId); 
 
 }

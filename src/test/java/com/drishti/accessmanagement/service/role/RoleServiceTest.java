@@ -21,6 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.drishti.accessmanagement.dto.role.RoleDto;
 import com.drishti.accessmanagement.dto.user.UserDto;
+import com.drishti.accessmanagement.exception.DuplicateRecordException;
 import com.drishti.accessmanagement.exception.RecordNotFoundException;
 import com.drishti.accessmanagement.repository.dao.role.RoleRepository;
 import com.drishti.accessmanagement.repository.entity.role.Role;
@@ -72,7 +73,7 @@ class RoleServiceTest {
   }
 
   @Test
-  public void findRoleById() {
+  public void findRoleById() throws RecordNotFoundException {
     Role role = roles.get(0);
     when(roleRepository.findById(role.getId())).thenReturn(Optional.of(role));
 
@@ -92,7 +93,7 @@ class RoleServiceTest {
   }
 
   @Test
-  public void createRole() {
+  public void createRole() throws DuplicateRecordException {
     Role role = roles.get(0);
     when(roleRepository.save(role)).thenReturn(role);
 
@@ -102,7 +103,7 @@ class RoleServiceTest {
   }
 
   @Test
-  public void updateRole() {
+  public void updateRole() throws RecordNotFoundException, DuplicateRecordException {
     String newName = "anyName";
     Role role = roles.get(0);
     role.setName(newName);
@@ -115,7 +116,7 @@ class RoleServiceTest {
   }
 
   @Test
-  public void deleteRoleById() {
+  public void deleteRoleById() throws RecordNotFoundException {
     Role role = roles.get(0);
     roleService.deleteRoleById(role.getId());
     verify(roleRepository, times(1)).deleteById(role.getId());

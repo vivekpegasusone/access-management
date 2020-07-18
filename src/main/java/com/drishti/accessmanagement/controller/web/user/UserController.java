@@ -30,6 +30,8 @@ import com.drishti.accessmanagement.controller.web.view.role.RoleVO;
 import com.drishti.accessmanagement.controller.web.view.user.UserVO;
 import com.drishti.accessmanagement.dto.application.ApplicationDto;
 import com.drishti.accessmanagement.dto.user.UserDto;
+import com.drishti.accessmanagement.exception.DuplicateRecordException;
+import com.drishti.accessmanagement.exception.RecordNotFoundException;
 import com.drishti.accessmanagement.service.application.ApplicationService;
 import com.drishti.accessmanagement.service.user.UserService;
 
@@ -64,12 +66,17 @@ public class UserController {
   
   @GetMapping(value = "/edit")
   public ModelAndView showEditUser(@RequestParam("userId") long userId) {
-    ModelAndView modelAndView = new ModelAndView(VIEW_CREATE_USER);
+    ModelAndView modelAndView = null;
     
-    UserDto userDto = userService.findUserById(userId);
-    List<ApplicationDto> applications = applicationService.findActiveApplications();
-    populateUserView(modelAndView, userDto, applications);
-
+    try {
+      modelAndView = new ModelAndView(VIEW_CREATE_USER);
+      UserDto userDto = userService.findUserById(userId);
+      List<ApplicationDto> applications = applicationService.findActiveApplications();
+      populateUserView(modelAndView, userDto, applications);
+    } catch (RecordNotFoundException e) {
+      modelAndView = listActiveUsers();
+      modelAndView.addObject("message", e.getMessage());
+    }
     return modelAndView;
   }
 
@@ -87,11 +94,19 @@ public class UserController {
       UserDto userDto = UserUtil.toUserDto(userVO);
       
       if(Objects.isNull(userDto.getId())) {
-        userService.createUser(userDto);
-        modelAndView.addObject("message", "User record saved successfully.");
+        try {
+          userService.createUser(userDto);
+          modelAndView.addObject("message", "User record saved successfully.");
+        } catch (DuplicateRecordException e) {
+          modelAndView.addObject("message", e.getMessage());
+        }        
       } else {
-        userService.updateUser(userDto);
-        modelAndView.addObject("message", "User record updated successfully.");
+        try {
+          userService.updateUser(userDto);
+          modelAndView.addObject("message", "User record updated successfully.");
+        } catch (RecordNotFoundException | DuplicateRecordException e) {
+          modelAndView.addObject("message", e.getMessage());
+        }        
       }
       modelAndView.addObject(MODEL_NAME, new UserVO());
     }
@@ -143,8 +158,15 @@ public class UserController {
   
   @GetMapping(value = "/delete")
   public ModelAndView delete(@RequestParam("userId") long userId) {
-    userService.deleteUserById(userId);
-    return listActiveUsers();
+    ModelAndView modelAndView = null;
+    try {
+      userService.deleteUserById(userId);
+      modelAndView = listActiveUsers();
+    } catch (RecordNotFoundException e) {
+      modelAndView = listActiveUsers();
+      modelAndView.addObject("message", e.getMessage());
+    }
+    return modelAndView;
   }
   
   private void populateUserView(ModelAndView modelAndView, List<ApplicationDto> applications) {

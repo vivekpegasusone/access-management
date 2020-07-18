@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
@@ -33,6 +35,8 @@ import com.drishti.accessmanagement.dto.application.ApplicationDto;
 import com.drishti.accessmanagement.dto.permission.PermissionDto;
 import com.drishti.accessmanagement.dto.resource.ResourceDto;
 import com.drishti.accessmanagement.dto.role.RoleDto;
+import com.drishti.accessmanagement.exception.DuplicateRecordException;
+import com.drishti.accessmanagement.exception.RecordNotFoundException;
 import com.drishti.accessmanagement.service.action.ActionService;
 import com.drishti.accessmanagement.service.application.ApplicationService;
 import com.drishti.accessmanagement.service.permission.PermissionService;
@@ -43,6 +47,7 @@ import com.drishti.accessmanagement.service.role.RoleService;
 @RequestMapping("/application")
 public class ApplicationController {
 
+  private static final Logger logger = LoggerFactory.getLogger(ApplicationController.class);
   private static final String MODEL_NAME = "applicationVO";
   
   @Autowired
@@ -67,7 +72,8 @@ public class ApplicationController {
   }
 
   @GetMapping(value = "/create")
-  public ModelAndView showCreateUser() {
+  public ModelAndView showCreateUser() throws Exception {
+    logger.info("Create application requested.");
     ModelAndView modelAndView = new ModelAndView(VIEW_CREATE_APPLICATION);
     modelAndView.addObject(MODEL_NAME, new ApplicationVO());
     
@@ -76,10 +82,17 @@ public class ApplicationController {
   
   @GetMapping(value = "/edit")
   public ModelAndView showEditUser(@RequestParam("applicationId") long applicationId) {
-    ModelAndView modelAndView = new ModelAndView(VIEW_CREATE_APPLICATION);
-    ApplicationDto applicationDto = applicationService.findApplicationById(applicationId);
+    logger.info("Edit application requested for id {}.", applicationId);
     
-    modelAndView.addObject(MODEL_NAME, ApplicationUtil.toApplicationView(applicationDto));    
+    ModelAndView modelAndView = null;     
+    try {
+      modelAndView = new ModelAndView(VIEW_CREATE_APPLICATION);
+      ApplicationDto applicationDto = applicationService.findApplicationById(applicationId);
+      modelAndView.addObject(MODEL_NAME, ApplicationUtil.toApplicationView(applicationDto));    
+    } catch (RecordNotFoundException e) {
+      modelAndView = listActiveApplications();
+      modelAndView.addObject("message", e.getMessage());
+    }    
     return modelAndView;
   }
 
@@ -93,13 +106,20 @@ public class ApplicationController {
       ApplicationDto applicationDto = ApplicationUtil.toApplicationDto(applicationVO);
       
       if(Objects.isNull(applicationDto.getId())) {
-        applicationService.createApplication(applicationDto);
-        modelAndView.addObject("message", "Application record saved successfully.");
+        try {
+          applicationService.createApplication(applicationDto);
+          modelAndView.addObject("message", "Application record saved successfully.");
+        } catch (DuplicateRecordException e) {
+          modelAndView.addObject("message", e.getMessage());
+        }        
       } else {
-        applicationService.updateApplication(applicationDto);
-        modelAndView.addObject("message", "Application record updated successfully.");
+        try {
+          applicationService.updateApplication(applicationDto);
+          modelAndView.addObject("message", "Application record updated successfully.");
+        } catch (RecordNotFoundException | DuplicateRecordException e) {
+          modelAndView.addObject("message", e.getMessage());
+        }        
       }
-
       modelAndView.addObject(MODEL_NAME, new ApplicationVO());
    }
 
@@ -150,8 +170,15 @@ public class ApplicationController {
   
   @GetMapping(value = "/delete")
   public ModelAndView delete(@RequestParam("applicationId") long applicationId) {
-    applicationService.deleteApplicationById(applicationId);
-    return listActiveApplications();
+    ModelAndView modelAndView = null;
+    try {
+      applicationService.deleteApplicationById(applicationId);
+      modelAndView = listActiveApplications();
+    } catch (RecordNotFoundException e) {
+      modelAndView = listActiveApplications();
+      modelAndView.addObject("message", e.getMessage());
+    }
+    return modelAndView;
   }
   
   @GetMapping(value = "/roles")

@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import com.drishti.accessmanagement.dto.action.ActionDto;
@@ -16,10 +18,13 @@ import com.drishti.accessmanagement.service.transformer.application.ApplicationT
 
 public class ActionTransformer implements Transformer<Action, ActionDto> {
 
+  private static final Logger logger = LoggerFactory.getLogger(ActionTransformer.class);
+  
   private Transformer<Application, ApplicationDto> applicationTransformer = new ApplicationTransformer();
 
   @Override
   public ActionDto transform(Action action) {
+    logger.info("Transforming action entity to action dto.");
     ActionDto actionDto = null;
     if (Objects.nonNull(action)) {
       actionDto = new ActionDto(action.getId(), action.getName(), action.getDescription(), action.isActive());
@@ -37,6 +42,7 @@ public class ActionTransformer implements Transformer<Action, ActionDto> {
 
   @Override
   public Action transform(ActionDto actionDto) {
+    logger.info("Transforming action dto to action entity.");
     Action action = null;
     if (Objects.nonNull(actionDto)) {
       action = new Action.ActionBuilder(actionDto.getName()).setId(actionDto.getId())
@@ -51,6 +57,7 @@ public class ActionTransformer implements Transformer<Action, ActionDto> {
 
   @Override
   public List<ActionDto> transform(List<Action> actions) {
+    logger.info("Transforming action entitys to action dtos.");
     List<ActionDto> actionDtos;
 
     if (CollectionUtils.isEmpty(actions)) {

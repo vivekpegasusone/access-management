@@ -3,6 +3,7 @@ package com.drishti.accessmanagement.service.resource;
 import java.util.List;
 
 import com.drishti.accessmanagement.dto.resource.ResourceDto;
+import com.drishti.accessmanagement.exception.DuplicateRecordException;
 import com.drishti.accessmanagement.exception.RecordNotFoundException;
 
 public interface ResourceService {
@@ -15,9 +16,9 @@ public interface ResourceService {
 
   ResourceDto findResourceById(Long id) throws RecordNotFoundException;
 
-  ResourceDto createResource(ResourceDto resourceDto);
+  ResourceDto createResource(ResourceDto resourceDto) throws DuplicateRecordException;
 
-  ResourceDto updateResource(ResourceDto resourceDto) throws RecordNotFoundException;
+  ResourceDto updateResource(ResourceDto resourceDto) throws RecordNotFoundException, DuplicateRecordException;
 
   void deleteResourceById(Long id) throws RecordNotFoundException;
 

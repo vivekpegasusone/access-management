@@ -1,9 +1,10 @@
 package com.drishti.accessmanagement.service.user;
 
-import com.drishti.accessmanagement.dto.user.UserDto;
-import com.drishti.accessmanagement.exception.RecordNotFoundException;
-
 import java.util.List;
+
+import com.drishti.accessmanagement.dto.user.UserDto;
+import com.drishti.accessmanagement.exception.DuplicateRecordException;
+import com.drishti.accessmanagement.exception.RecordNotFoundException;
 
 public interface UserService {
   
@@ -17,9 +18,9 @@ public interface UserService {
 
   UserDto findUserByLoginId(String loginId) throws RecordNotFoundException;
 
-  UserDto createUser(UserDto userDto);
+  UserDto createUser(UserDto userDto) throws DuplicateRecordException;
 
-  UserDto updateUser(UserDto userrDto) throws RecordNotFoundException;
+  UserDto updateUser(UserDto userrDto) throws RecordNotFoundException, DuplicateRecordException;
 
   void deleteUserById(Long id) throws RecordNotFoundException;
 

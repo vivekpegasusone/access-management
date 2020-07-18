@@ -2,6 +2,7 @@ package com.drishti.accessmanagement.service.user;
 
 import com.drishti.accessmanagement.dto.role.RoleDto;
 import com.drishti.accessmanagement.dto.user.UserDto;
+import com.drishti.accessmanagement.exception.DuplicateRecordException;
 import com.drishti.accessmanagement.exception.RecordNotFoundException;
 import com.drishti.accessmanagement.repository.dao.user.UserRepository;
 import com.drishti.accessmanagement.repository.entity.role.Role;
@@ -70,7 +71,7 @@ class UserServiceTest {
   }
 
   @Test
-  public void findUserById() {
+  public void findUserById() throws RecordNotFoundException {
     User user = users.get(0);
     when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
 
@@ -90,7 +91,7 @@ class UserServiceTest {
   }
 
   @Test
-  public void findUserByLoginId() {
+  public void findUserByLoginId() throws RecordNotFoundException {
     User user = users.get(0);
     when(userRepository.findByLoginId(user.getLoginId())).thenReturn(Optional.of(user));
 
@@ -110,7 +111,7 @@ class UserServiceTest {
   }
 
   @Test
-  public void createUser() {
+  public void createUser() throws DuplicateRecordException {
     User user = users.get(0);
     when(userRepository.save(user)).thenReturn(user);
 
@@ -120,7 +121,7 @@ class UserServiceTest {
   }
 
   @Test
-  public void updateUser() {
+  public void updateUser() throws RecordNotFoundException, DuplicateRecordException {
     String newName = "anyName";
     User user = users.get(0);
     user.setFirstName(newName);
@@ -133,7 +134,7 @@ class UserServiceTest {
   }
 
   @Test
-  public void deleteUserById() {
+  public void deleteUserById() throws RecordNotFoundException {
     User user = users.get(0);
     userService.deleteUserById(user.getId());
     verify(userRepository, times(1)).deleteById(user.getId());

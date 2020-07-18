@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import com.drishti.accessmanagement.dto.application.ApplicationDto;
@@ -15,13 +17,17 @@ import com.drishti.accessmanagement.repository.entity.role.Role;
 import com.drishti.accessmanagement.repository.entity.user.User;
 import com.drishti.accessmanagement.service.transformer.Transformer;
 import com.drishti.accessmanagement.service.transformer.application.ApplicationTransformer;
+import com.drishti.accessmanagement.service.transformer.resource.ResourceTransformer;
 
 public class UserTransformer implements Transformer<User, UserDto> {
+  
+  private static final Logger logger = LoggerFactory.getLogger(UserTransformer.class);
   
   private Transformer<Application, ApplicationDto> applicationTransformer = new ApplicationTransformer();
   
   @Override
   public UserDto transform(User user) {
+    logger.info("Transforming user entity to user dto.");
     UserDto userDto = null;
     if (Objects.nonNull(user)) {
       ApplicationDto appDto = applicationTransformer.transform(user.getApplication());
@@ -37,6 +43,7 @@ public class UserTransformer implements Transformer<User, UserDto> {
 
   @Override
   public List<UserDto> transform(List<User> users) {
+    logger.info("Transforming user entitys to user dtos.");
     List<UserDto> userDtoList;
     
     if(CollectionUtils.isEmpty(users)) {
@@ -50,6 +57,7 @@ public class UserTransformer implements Transformer<User, UserDto> {
 
   @Override
   public User transform(UserDto userDto) {
+    logger.info("Transforming user dto to user entity.");
     User user = null;
     if (Objects.nonNull(userDto)) {
       Role role = transformToRole(userDto.getRoleDto());

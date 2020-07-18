@@ -3,6 +3,7 @@ package com.drishti.accessmanagement.service.action;
 import java.util.List;
 
 import com.drishti.accessmanagement.dto.action.ActionDto;
+import com.drishti.accessmanagement.exception.DuplicateRecordException;
 import com.drishti.accessmanagement.exception.RecordNotFoundException;
 
 public interface ActionService {
@@ -15,9 +16,9 @@ public interface ActionService {
 
   ActionDto findActionById(Long id) throws RecordNotFoundException;
 
-  ActionDto createAction(ActionDto actionDto);
+  ActionDto createAction(ActionDto actionDto) throws DuplicateRecordException;
 
-  ActionDto updateAction(ActionDto actionDto) throws RecordNotFoundException;
+  ActionDto updateAction(ActionDto actionDto) throws RecordNotFoundException, DuplicateRecordException;
 
   void deleteActionById(Long id) throws RecordNotFoundException;
 

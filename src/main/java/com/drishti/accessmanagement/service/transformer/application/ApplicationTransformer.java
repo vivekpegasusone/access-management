@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import com.drishti.accessmanagement.dto.application.ApplicationDto;
@@ -13,8 +15,11 @@ import com.drishti.accessmanagement.service.transformer.Transformer;
 
 public class ApplicationTransformer implements Transformer<Application, ApplicationDto> {
 
+  private static final Logger logger = LoggerFactory.getLogger(ApplicationTransformer.class);
+  
   @Override
   public ApplicationDto transform(Application application) {
+    logger.info("Transforming application entity to application dto.");
     ApplicationDto applicationDto = null;
     if (Objects.nonNull(application)) {
       applicationDto = new ApplicationDto(application.getId(), application.getName(), application.getDescription(),
@@ -27,6 +32,7 @@ public class ApplicationTransformer implements Transformer<Application, Applicat
 
   @Override
   public List<ApplicationDto> transform(List<Application> applications) {
+    logger.info("Transforming application entitys to application dtos.");
     List<ApplicationDto> applicationDtos;
     
     if(CollectionUtils.isEmpty(applications)) {
@@ -44,6 +50,7 @@ public class ApplicationTransformer implements Transformer<Application, Applicat
 
   @Override
   public Application transform(ApplicationDto applicationDto) {
+    logger.info("Transforming application dto to application entity.");
     Application application = null;
     if (Objects.nonNull(applicationDto)) {
       application = new Application.ApplicationBuilder(applicationDto.getName()).setId(applicationDto.getId())

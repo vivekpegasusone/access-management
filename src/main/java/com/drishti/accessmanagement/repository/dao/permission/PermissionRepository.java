@@ -24,4 +24,7 @@ public interface PermissionRepository extends JpaRepository<Permission, Long> {
       + "inner join fetch r.application app "
       + "where a.application.id = r.application.id and app.active = true and a.application.id = :applicationId")
   List<Permission> findPermissionsByApplicationId(Long applicationId);
+
+  @Query("from Permission p where p.name = :name or (p.resource.id = :resourceId and p.action.id = :actionId)")
+  Optional<Permission> findByNameOrResourceAndAction(String name, Long resourceId, Long actionId);
 }

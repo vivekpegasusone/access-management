@@ -3,6 +3,7 @@ package com.drishti.accessmanagement.service.permission;
 import java.util.List;
 
 import com.drishti.accessmanagement.dto.permission.PermissionDto;
+import com.drishti.accessmanagement.exception.DuplicateRecordException;
 import com.drishti.accessmanagement.exception.RecordNotFoundException;
 
 public interface PermissionService {
@@ -15,9 +16,9 @@ public interface PermissionService {
 
   PermissionDto findPermissionById(Long id) throws RecordNotFoundException;
 
-  PermissionDto createPermission(PermissionDto permissionDto);
+  PermissionDto createPermission(PermissionDto permissionDto) throws DuplicateRecordException;
 
-  PermissionDto updatePermission(PermissionDto permissionDto) throws RecordNotFoundException;
+  PermissionDto updatePermission(PermissionDto permissionDto) throws RecordNotFoundException, DuplicateRecordException;
 
   void deletePermissionById(Long id) throws RecordNotFoundException;
 

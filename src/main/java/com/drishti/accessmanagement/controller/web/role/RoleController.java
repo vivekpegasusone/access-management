@@ -30,6 +30,8 @@ import com.drishti.accessmanagement.controller.web.view.permission.PermissionVO;
 import com.drishti.accessmanagement.controller.web.view.role.RoleVO;
 import com.drishti.accessmanagement.dto.application.ApplicationDto;
 import com.drishti.accessmanagement.dto.role.RoleDto;
+import com.drishti.accessmanagement.exception.DuplicateRecordException;
+import com.drishti.accessmanagement.exception.RecordNotFoundException;
 import com.drishti.accessmanagement.service.application.ApplicationService;
 import com.drishti.accessmanagement.service.role.RoleService;
 
@@ -56,7 +58,6 @@ public class RoleController {
   @GetMapping(value = "/create")
   public ModelAndView showCreateRole() {
     ModelAndView modelAndView = new ModelAndView(VIEW_CREATE_ROLE);
-
     List<ApplicationDto> applicationDtoList = applicationService.findActiveApplications();
     populateRoleView(modelAndView, applicationDtoList);
 
@@ -65,12 +66,17 @@ public class RoleController {
 
   @GetMapping(value = "/edit")
   public ModelAndView showEditRole(@RequestParam("roleId") long roleId) {
-    ModelAndView modelAndView = new ModelAndView(VIEW_CREATE_ROLE);
-    RoleDto roleDto = roleService.findRoleById(roleId);
-
-    List<ApplicationDto> applicationDtoList = applicationService.findActiveApplications();
-    populateRoleView(modelAndView, roleDto, applicationDtoList);
-
+    ModelAndView modelAndView = null;     
+    
+    try {
+      modelAndView = new ModelAndView(VIEW_CREATE_ROLE);
+      RoleDto roleDto = roleService.findRoleById(roleId);
+      List<ApplicationDto> applicationDtoList = applicationService.findActiveApplications();
+      populateRoleView(modelAndView, roleDto, applicationDtoList);
+    } catch (RecordNotFoundException e) {
+      modelAndView = listActiveRoles();
+      modelAndView.addObject("message", e.getMessage());
+    }
     return modelAndView;
   }
 
@@ -86,11 +92,19 @@ public class RoleController {
       RoleDto roleDto = RoleUtil.toRoleDto(roleVO);
 
       if (Objects.isNull(roleDto.getId())) {
-        roleDto = roleService.createRole(roleDto);
-        modelAndView.addObject("message", "Role record saved successfully.");
+        try {
+          roleDto = roleService.createRole(roleDto);
+          modelAndView.addObject("message", "Role record saved successfully.");
+        } catch (DuplicateRecordException e) {
+          modelAndView.addObject("message", e.getMessage());
+        }        
       } else {
-        roleService.updateRole(roleDto);
-        modelAndView.addObject("message", "Role record updated successfully.");
+        try {
+          roleService.updateRole(roleDto);
+          modelAndView.addObject("message", "Role record updated successfully.");
+        } catch (RecordNotFoundException | DuplicateRecordException e) {
+          modelAndView.addObject("message", e.getMessage());
+        }        
       }
     }    
 
@@ -141,8 +155,15 @@ public class RoleController {
 
   @GetMapping(value = "/delete")
   public ModelAndView delete(@RequestParam("roleId") long roleId) {
-    roleService.deleteRoleById(roleId);
-    return listActiveRoles();
+    ModelAndView modelAndView = null;
+    try {
+      roleService.deleteRoleById(roleId);
+      modelAndView = listActiveRoles();
+    } catch (RecordNotFoundException e) {
+      modelAndView = listActiveRoles();
+      modelAndView.addObject("message", e.getMessage());
+    }
+    return modelAndView;
   }
 
   private void populateRoleView(ModelAndView modelAndView, List<ApplicationDto> applicationDtoList) {
